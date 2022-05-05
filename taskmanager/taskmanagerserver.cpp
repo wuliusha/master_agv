@@ -6,7 +6,7 @@ taskManagerServer::taskManagerServer(QObject *parent) : QObject(parent)
 
     StTimer = new QTimer(this);
     connect(StTimer,&QTimer::timeout,this,&taskManagerServer::taskManagerServerTimer);
-    StTimer->start(300);
+    StTimer->start(500);
 
 }
 
