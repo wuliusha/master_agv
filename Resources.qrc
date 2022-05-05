@@ -1,0 +1,47 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/appico.ico</file>
+        <file>image/Background_2f.png</file>
+        <file>image/Background_3f.png</file>
+        <file>image/call.jpg</file>
+        <file>image/charge.png</file>
+        <file>image/checked.png</file>
+        <file>image/door_close.png</file>
+        <file>image/door_opend.png</file>
+        <file>image/fontawesome-webfont.ttf</file>
+        <file>image/fontawesome-webfont.woff</file>
+        <file>image/identifiers.png</file>
+        <file>image/identifiers1.png</file>
+        <file>image/identifiers2.png</file>
+        <file>image/login.jpg</file>
+        <file>image/login1.png</file>
+        <file>image/password.png</file>
+        <file>image/plot.log</file>
+        <file>image/robot_1.png</file>
+        <file>image/robot_2.png</file>
+        <file>image/robot_3.png</file>
+        <file>image/robot_4.png</file>
+        <file>image/robot_5.png</file>
+        <file>image/robot_6.png</file>
+        <file>image/robot_7.png</file>
+        <file>image/robot_8.png</file>
+        <file>image/robot_9.png</file>
+        <file>image/robot_10.png</file>
+        <file>image/Robot_180.png</file>
+        <file>image/Robots_0.png</file>
+        <file>image/rotation.png</file>
+        <file>image/seroroff.png</file>
+        <file>image/seroron.png</file>
+        <file>image/startlogin.png</file>
+        <file>image/station.bmp</file>
+        <file>image/station0.bmp</file>
+        <file>image/station1.bmp</file>
+        <file>image/station2.bmp</file>
+        <file>image/station3.ico</file>
+        <file>image/station4.bmp</file>
+        <file>image/station5.bmp</file>
+        <file>image/system_upgrade.png</file>
+        <file>image/task.png</file>
+        <file>image/unchecked.png</file>
+    </qresource>
+</RCC>
