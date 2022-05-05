@@ -1,0 +1,30 @@
+{
+    "network":{
+        "hostIp":"172.16.10.1",
+	  "callIp":"172.16.10.49",
+        "hostPort_agv":10000,
+        "agvPort":10001,
+        "hostPort_lift":10002,
+        "liftPort":10003,
+        "hostPort_rollingCurtain":10004,
+        "rollingCurtainPort":10005,
+	  "hostPort_buttonPort":10006,
+        "buttonPort":10007,
+	  "smtPort": 10016,
+	  "hostcallPort":10015,
+	  "callPort":10013
+	 
+    },
+    "database":{
+        "type":"QSQLITE",
+        "host":"127.0.0.1",
+        "port":3306,
+        "username":"okagv",
+        "password":"okjiqiren",
+        "database_name":"E:/ASM-AGV (Master)/resource/agv.db",
+        "test_on_borrow":true,
+        "test_on_borrow_sql":"select 1",
+        "max_connection_count":5,
+        "max_wait_time":3000
+    }
+}

@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/appico.ico</file>
+        <file>image/call.jpg</file>
+        <file>image/checked.png</file>
+        <file>image/fontawesome-webfont.ttf</file>
+        <file>image/fontawesome-webfont.woff</file>
+        <file>image/login.jpg</file>
+        <file>image/startlogin.png</file>
+        <file>image/identifiers.png</file>
+        <file>image/identifiers1.png</file>
+        <file>image/identifiers2.png</file>
+        <file>image/password.png</file>
+        <file>image/station.bmp</file>
+        <file>image/station0.bmp</file>
+        <file>image/station1.bmp</file>
+        <file>image/station2.bmp</file>
+        <file>image/station3.ico</file>
+        <file>image/station4.bmp</file>
+        <file>image/station5.bmp</file>
+        <file>image/timg.gif</file>
+        <file>image/timg1.gif</file>
+        <file>image/unchecked.png</file>
+        <file>image/login1.png</file>
+        <file>image/charge.png</file>
+        <file>image/door_close.png</file>
+        <file>image/door_opend.png</file>
+        <file>image/Background_2f.png</file>
+        <file>image/Background_3f.png</file>
+        <file>image/Robot_180.png</file>
+        <file>image/Robots_0.png</file>
+    </qresource>
+</RCC>

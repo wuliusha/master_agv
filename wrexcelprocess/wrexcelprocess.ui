@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>wrexcelprocess</class>
+ <widget class="QWidget" name="wrexcelprocess">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1202</width>
+    <height>675</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">color:#ffffff;
+background-color: rgb(81, 81, 81);</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,20,1">
+     <item>
+      <widget class="QWidget" name="widget" native="true">
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,10,1,1">
+          <property name="spacing">
+           <number>15</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="BtnReturn">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:#FEFEFE;
+background-color: rgb(81, 81, 81);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labTitle">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>26</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:#FEFEFE;
+background-color: rgb(81, 81, 81);</string>
+            </property>
+            <property name="text">
+             <string>RW_Excel</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::PlainText</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Btn_Edit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:#FEFEFE;
+background-color: rgb(81, 81, 81);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Btn_Close">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color:#FEFEFE;
+background-color: rgb(81, 81, 81);</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="tableWidget">
+       <column>
+        <property name="text">
+         <string>A</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>B</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>C</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>D</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>E</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>F</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>G</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>H</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>I</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>J</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>K</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>L</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>M</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>N</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>O</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>P</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Q</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="8,5,1,1">
+       <property name="spacing">
+        <number>15</number>
+       </property>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(81, 81, 81);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="readexcel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Read</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="writeexcel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Write</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
