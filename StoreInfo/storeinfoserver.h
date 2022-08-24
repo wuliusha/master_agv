@@ -9,7 +9,7 @@ class storeInfoServer : public QObject
     Q_OBJECT
 public:
     explicit storeInfoServer(QObject *parent = nullptr);
-    StoreInfo *StoreInfoItem;        //库存管理
+
 
 signals:
 

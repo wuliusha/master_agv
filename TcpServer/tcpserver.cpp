@@ -28,7 +28,7 @@ void TcpServer::ON_SendTimer()
                     QByteArray ActionArray=getActionArray(iter_.key());
                     if(!ActionArray.isEmpty()){
                         iter_.value()->write(ActionArray,ActionArray.size());
-                        iter_.value()->flush();
+                        //iter_.value()->flush();
                     }
                 }
             }else{
@@ -57,9 +57,9 @@ void TcpServer::incomingConnection(qintptr Descriptor)
     QHostAddress peerAddress(tcpsocket->peerAddress().toIPv4Address());
     TcpSocketList.insert(peerAddress.toString(),tcpsocket);
 
-//    TcpServer_device TcpServer_deviceI;
-//    TcpServer_deviceI.deviceIP=peerAddress.toString();                       //平板客户端 IP
-//    TcpServer_deviceMap.insert(TcpServer_deviceI.deviceIP,TcpServer_deviceI);
+//    deviceServer deviceServerI;
+//    deviceServerI.deviceIP=peerAddress.toString();                       //平板客户端 IP
+//    deviceServerMap.insert(deviceServerI.deviceIP,deviceServerI);
 
     qDebug()<<"new Connection TcpClient]--------:"<<peerAddress.toString()<<"  size:"<<TcpSocketList.count()<<endl;
 
@@ -71,7 +71,6 @@ void TcpServer::ON_ReceiveData()
     QByteArray BoxByteArray;
     BoxByteArray = SocketTemp->readAll();
     qintptr descriptor=SocketTemp->socketDescriptor();
-    //qDebug()<<" BoxByteArray:"<<BoxByteArray.toHex();
     if(SocketTemp != nullptr){
         QHostAddress peerAddress(SocketTemp->peerAddress().toIPv4Address());
         QString ClientIP=peerAddress.toString();
@@ -88,18 +87,15 @@ void TcpServer::ON_ReceiveData()
 
 void TcpServer::TcpServerProcessing(QString ClientIP,QByteArray AnalysisArray, qintptr descriptor)
 {
-    QMap<QString,TcpServer_device>::iterator iter =TcpServer_deviceMap.begin();
-    while (iter != TcpServer_deviceMap.end()) {
-        if(iter.value().deviceIP== ClientIP && !AnalysisArray.isEmpty()){
-            iter.value().AnalysisArrayMap.insert(ClientIP,AnalysisArray);
+    QMap<QString,deviceServer>::iterator iter =deviceServerMap.begin();
+    while (iter != deviceServerMap.end()) {
+        if(iter.value().deviceIP== ClientIP && !AnalysisArray.isEmpty()
+                && AnalysisArray.size()==19){
+            //iter.value().AnalysisArrayMap.insert(ClientIP,AnalysisArray);
             //qDebug()<<"TcpServerProcessing----> ClientIP:"<<ClientIP<<" AnalysisArray:"<<AnalysisArray.toHex();
-            //emit sigLiftStatuschage(ClientIP,AnalysisArray);                     //实时更新电梯状态信息
             emit sigDeviceStatuschage(ClientIP,AnalysisArray);      //实时更新设备状态信息
-
-            //ReplyJson ReplyJsonI;
-            //transFormArray::GetInstance()->newSAPExcelInfoTask_Process(ClientIP,AnalysisArray,ReplyJsonI);
         }
-        iter++;
+        ++iter;
     }
 
 }
@@ -119,18 +115,18 @@ void TcpServer::ON_ClientDisconnected()
     }
 }
 
-void TcpServer::setTcpServer_deviceInfo(TcpServer_device TcpServer_deviceI)
+void TcpServer::setdeviceServerInfo(deviceServer deviceServerI)
 {
-    if(!TcpServer_deviceMap.contains(TcpServer_deviceI.deviceIP)){
-        TcpServer_deviceMap.insert(TcpServer_deviceI.deviceIP,TcpServer_deviceI);
+    if(!deviceServerMap.contains(deviceServerI.deviceIP)){
+        deviceServerMap.insert(deviceServerI.deviceIP,deviceServerI);
     }
 }
 
-void TcpServer::setTcpServer_deviceAction(QString deviceIP, QByteArray ActionArray)
+void TcpServer::setdeviceServerAction(QString deviceIP, QByteArray ActionArray)
 {
-    if(TcpServer_deviceMap.contains(deviceIP)){//平板客户端链接缓存
-        QMap<QString,TcpServer_device>::iterator iter =TcpServer_deviceMap.begin();
-        while (iter != TcpServer_deviceMap.end()) {
+    if(deviceServerMap.contains(deviceIP)){
+        QMap<QString,deviceServer>::iterator iter =deviceServerMap.begin();
+        while (iter != deviceServerMap.end()) {
             if(iter.value().deviceIP!=nullptr){
                 if(iter.value().deviceIP== deviceIP && !iter.value().deviceActionArray.contains(ActionArray)){
                     iter.value().deviceActionArray.insert(ActionArray,ActionArray);
@@ -139,7 +135,7 @@ void TcpServer::setTcpServer_deviceAction(QString deviceIP, QByteArray ActionArr
             }else{
                 return;
             }
-            iter++;
+            ++iter;
         }
     }
 }
@@ -147,9 +143,9 @@ void TcpServer::setTcpServer_deviceAction(QString deviceIP, QByteArray ActionArr
 QByteArray TcpServer::getActionArray(QString ClientIP)
 {
     QByteArray ActionArray;
-    if(TcpServer_deviceMap.contains(ClientIP)){//平板客户端链接缓存
-        QMap<QString,TcpServer_device>::iterator iter =TcpServer_deviceMap.begin();
-        while (iter != TcpServer_deviceMap.end()) {
+    if(deviceServerMap.contains(ClientIP)){//平板客户端链接缓存
+        QMap<QString,deviceServer>::iterator iter =deviceServerMap.begin();
+        while (iter != deviceServerMap.end()) {
             if(iter.value().deviceIP!=nullptr){
                 if(deleteSocketList.isEmpty()){
                     if(iter.value().deviceIP== ClientIP){
@@ -159,8 +155,8 @@ QByteArray TcpServer::getActionArray(QString ClientIP)
                             qDebug()<<"send--> Action:"<<ClientIP<<iter.value().deviceActionArray.size();
                             return ActionArray;
                         }else{
-                             //qDebug()<<"query--> Action:"<<ClientIP<<iter.value().deviceQueryArray.toHex();
-                             return iter.value().deviceQueryArray;//查询指令
+                             //qDebug()<<"query--> Action:"<<ClientIP<<iter.value().queryArray.toHex();
+                             return iter.value().queryArray;//查询指令
                         }
                     }
                 }else {
@@ -169,41 +165,15 @@ QByteArray TcpServer::getActionArray(QString ClientIP)
             }else{
                 return  ActionArray;
             }
-            iter++;
+            ++iter;
         }
     }
     return ActionArray;
 }
 
-//设备动作指令——————> DeviceIP：设备IP     deviceType：设备类型   orderType：动作指令   Action：动作标识
-void TcpServer::ON_DeviceStatusAction(QString DeviceIP, QString deviceType, QString orderType, int Action)
-{
-    QByteArray actionArray=array_Single::GetInstance()->device_action(deviceType,orderType);
-    if(TcpServer_deviceMap.contains(DeviceIP) && !actionArray.isEmpty()){//平板客户端链接缓存
-        QMap<QString,TcpServer_device>::iterator iter =TcpServer_deviceMap.begin();
-        while (iter != TcpServer_deviceMap.end()) {
-            if(iter.value().deviceIP!=nullptr){
-                if(iter.value().deviceIP == DeviceIP ){
-                    if(!iter.value().deviceActionArray.contains(actionArray)){
-                        iter.value().deviceActionArray.insert(actionArray,actionArray);
-                        qDebug()<<"TcpServer---insert_--> DeviceIP:"<<DeviceIP<<" ActionArray:"<<actionArray.toHex();
-                    }
-                }
-            }else{
-                return;
-            }
-            iter++;
-        }
-    }
-
-}
 
 
-void TcpServer::ON_setConfigureArray(QString TaskType, QByteArray AnalysisArray)
-{
-    ConfigureArray_Info.insert(TaskType,AnalysisArray);//基础信息 缓存链表
-    //qDebug()<<"ON_setConfigureArray-->"<<AnalysisArray.size();
-}
+
 
 
 

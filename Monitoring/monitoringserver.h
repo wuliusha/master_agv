@@ -9,7 +9,7 @@ class monitoringServer : public QObject
     Q_OBJECT
 public:
     explicit monitoringServer(QObject *parent = nullptr);
-    monitoring *monitoringI;
+
 signals:
 
 public slots:

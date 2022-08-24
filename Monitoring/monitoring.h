@@ -2,7 +2,7 @@
 #define MONITORING_H
 
 #include <QWidget>
-#include "project/agvitem.h"
+#include "project/agvitemwidget.h"
 #include "project/imagewidget.h"
 #include "project/pointinput.h"
 
@@ -28,9 +28,8 @@ signals:
 
 public slots:
     void monitoringTimeout();
-    void ON_signalPoint(QPointF mousePoint,QString Type);//left right
+    void ON_signalPoint(QPointF mousePoint,QString Type);
 
-    void sigAgvItemClick();
 public :
     QTimer *monitoringTimer;
 
@@ -40,7 +39,8 @@ public :
     PointInput *PointInputI;
     AgvItemWidget *AgvItemWidgetI;
 
-    QList<AgvItem *> AgvItemcarList;
+    bool boolagvState=true;                            //槽函数 保护机制
+    QList<AgvItem > AgvItemcarList;
     QMap<double,mapPoint>currentMapPoint;
 
     QPoint mousePoint; //当前鼠标的位置

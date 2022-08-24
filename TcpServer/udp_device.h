@@ -20,7 +20,7 @@ public:
     explicit Udp_Device(QObject *parent = nullptr);
       ~Udp_Device();
 
-    void Udp_DeviceInit();
+    void setListen(quint16 port);
 
     QByteArray getActionArray(QString DeviceIP);
 
@@ -48,7 +48,7 @@ public:
      QMap<QString,TcpServer_device>TcpServer_deviceMap;
 
      //设备信息初始化
-     void setDeviceInit(QString DeviceIP,QString deviceType);
+     void setDeviceInit(QString DeviceIP,QByteArray queryArray);
 
 public slots:
 

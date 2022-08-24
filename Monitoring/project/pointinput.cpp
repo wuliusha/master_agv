@@ -43,11 +43,12 @@ void PointInput::on_deleteButton_clicked()
     }
 }
 
-void PointInput::setPoint(const QPointF &tempPoint)
+void PointInput::setPoint(const QPointF &tempPoint,int floor)
 {
     nowPoint = tempPoint;
     ui->xEdit->setText(QString::number(nowPoint.x()));
     ui->yEdit->setText(QString::number(nowPoint.y()));
+    ui->floorNum->setCurrentIndex(floor-1);
 
 }
 
@@ -64,9 +65,9 @@ mapPoint PointInput::getMapPoint()
     mapPointI.movex=xdesc.toDouble();
     mapPointI.movey=ydesc.toDouble();
 
-    int xEdit=ui->xEdit->text().toInt();
-    int yEdit=ui->yEdit->text().toInt();
-    int space=ui->space->text().toInt();
+    double xEdit=ui->xEdit->text().trimmed().toDouble();
+    double yEdit=ui->yEdit->text().trimmed().toDouble();
+    double space=ui->space->text().trimmed().toDouble();
     if(ui->coordinate->currentText().trimmed()=="X方向"){
         mapPointI.angle=0.00;
         ui->xEdit->setText(QString::number(xEdit+space));

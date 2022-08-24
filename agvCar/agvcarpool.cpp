@@ -61,16 +61,16 @@ void agvCarPool::initAgvFloorMap()
                 connect(agvCarItem,&agvCar::sigDoorSubTaskAction,this,&agvCarPool::sigDoorSubTaskAction);
                 connect(agvCarItem,&agvCar::TaskmoveListProcess,this,&agvCarPool::ON_TaskmoveListProcess);
 
-                agvCarItem->pathMapInit();
-                agvCarItem->sendInitializeCommand(1004);       //发送AGV初始化命令 槽函数
+                agvCarItem->sendAGVORderCommand(100);//发送 AGV (初始化命令/同步帧编码) 函数
 
+                agvCarItem->agvId = sqlQuery.value("AGVId").toInt();
+                agvCarItem->agvIp = sqlQuery.value("AGVIP").toString();
                 agvCarMap.insert(agvCarItem,sqlQuery.value("AGVIP").toString());
                 agvThreadMap.insert(threadItem,sqlQuery.value("AGVIP").toString());
-                agvCarItem->agvIp = sqlQuery.value("AGVIP").toString();
-                agvCarItem->agvStateItem.AGVWaitQRPoint = sqlQuery.value("waitPoint").toUInt();
 
-                qDebug()<<agvCarItem->agvIp<<agvCarItem->agvStateItem.AGVWaitQRPoint<<"读取每个楼层的AGV并创建"
-                      <<" commandNo:" <<agvCarItem->commandNo;
+                //agvCarItem->agvStateItem.AGVWaitQRPoint = sqlQuery.value("waitPoint").toUInt();
+
+                qDebug()<<"读取每个楼层的AGV并创建"<<agvCarItem->agvIp<<" commandNo:" <<agvCarItem->commandNo;
             }
         }
     }
@@ -118,7 +118,8 @@ void agvCarPool::onAgvCarSocketDeleteLater()
     agvCarSocket *agvCarSocketTemp = (agvCarSocket *)this->sender();
     if(agvCarSocketTemp != nullptr)
     {
-        disconnect(agvCarSocketTemp,SIGNAL(disconnected()),this,SLOT(onAgvCarSocketDeleteLater()));
+        //disconnect(agvCarSocketTemp,SIGNAL(disconnected()),this,SLOT(onAgvCarSocketDeleteLater()));
+        qDebug()<<"释放已掉线的AGV通信Socket:"<<agvCarSocketTemp->peerAddress().toIPv4Address();
         agvCarSocketMap.value(agvCarSocketTemp)->agvCarSocketItemMap.remove(agvCarSocketTemp);
         agvCarSocketMap.remove(agvCarSocketTemp);
         agvCarSocketTemp->deleteLater();
@@ -128,14 +129,12 @@ void agvCarPool::onAgvCarSocketDeleteLater()
 //发布AGV任务
 void agvCarPool::onAGVMoveTask(QString AGVIP, quint32 StartQRPoint, quint32 EndQRPoint, int AGVAction,int tye,agvORderTask agvORderTaskI)
 {
-    qDebug()<<"onAGVMoveTask:"<<AGVIP<<" StartQRPoint:"<<StartQRPoint<<" EndQRPoint:"<<EndQRPoint<<" AGVAction:"<<AGVAction;
     if(!agvCarMap.isEmpty()){
         agvCar *agvCarTemp = agvCarMap.key(AGVIP);
         if(agvCarTemp != nullptr){
             agvCarTemp->AGVMoveTask(StartQRPoint,EndQRPoint,AGVAction,tye,agvORderTaskI);
         }
     }
-
 }
 
 void agvCarPool::ON_AGVChargeTask(QString AGVIP, quint16 opendcharge)
@@ -154,100 +153,6 @@ void agvCarPool::ON_TaskmoveListProcess(QString AGVIP, QMap<int,agvSubTask> Task
     agvCar *agvCarTemp = agvCarMap.key(AGVIP);
     if(agvCarTemp != nullptr){
 
-        //AGV子任务列表 当前 未执行 的二维码任务链表
-        int passPointState=agvStateItem.passPointState.toInt();               //AGV上次读到的二维码点
-        if(!doorSubTaskMap.isEmpty() && doorSubTaskbool){
-            doorSubTaskbool=false;
-            QMap <int,doorSubTask>::iterator iter_= doorSubTaskMap.begin();//自动门开门信号
-            while (iter_!=doorSubTaskMap.end()){
-
-                if(agvStateItem.agvFinishInit && (agvStateItem.CurrentDestpoint==0 || Initaction==0)){
-                    if(agvStateItem.agvIp==iter_.value().AGVIP && iter_.value().AGVIP !=""){
-                        iter_.value().Point=0;
-                        iter_.value().AGVIP="";
-                        iter_.value().orderAction=0;
-                        iter_.value().NextPointList.clear();
-                        doorSubTaskbool=true;
-                        agvCarTemp->Taskmove_Processbool=true;
-
-                        emit sigDoorSubTaskAction(iter_.value().doorIP,2,iter_.value().AGVIP);
-                        qDebug()<<iter_.value().doorIP<<"AGV 数据清除 自动门空闲";
-                    }
-                }
-
-                if(agvStateItem.agvIp==iter_.value().AGVIP && iter_.value().AGVIP !=""){
-//                    qDebug()<<iter_.value().AGVIP<<agvStateItem.agvIp<<" 当前二维码:"<<passPointState<<" 开门点:"<<iter_.value().Point<<" doorPoint:"<<agvStateItem.doorPoint
-//                           <<" action:"<<iter_.value().action<<" DeviceStatus:"<<iter_.value().DeviceStatus
-//                          <<" device_Line:"<<iter_.value().device_Line;
-
-                    if(passPointState==iter_.value().Point
-                         && (iter_.value().orderAction==0 || iter_.value().orderAction==1)){
-                        if(iter_.value().door_status==1 && iter_.value().door_Line==1){
-                            doorSubTaskbool=false;
-                            iter_.value().orderAction=1;
-                            emit sigDoorSubTaskAction(iter_.value().doorIP,1,iter_.value().AGVIP);
-                            qDebug()<<iter_.value().doorIP<<passPointState<<"提交开门信号 0-->AGVIP"<<AGVIP;
-                        }else{
-                            doorSubTaskbool=true;
-                            emit sigDoorSubTaskAction(iter_.value().doorIP,1,iter_.value().AGVIP);
-                            qDebug()<<iter_.value().doorIP<<passPointState<<"提交开门信号 1-->AGVIP"<<AGVIP;
-                        }
-                    }
-
-                    //开门到位前往目标二维码
-                    if(passPointState==iter_.value().Point  && iter_.value().door_status==1
-                            && iter_.value().door_Line==1 && iter_.value().orderAction==1){
-                        iter_.value().orderAction=2;
-                        agvCarTemp->Device_door_Action(iter_.value().doorIP,1,0);
-                        emit sigDoorSubTaskAction(iter_.value().doorIP,1,iter_.value().AGVIP);
-                        qDebug()<<iter_.value().doorIP<<"开门到位";
-                        //doorSubTaskbool=true;
-                    }
-
-                    if(!iter_.value().NextPointList.contains(int(passPointState))
-                             && iter_.value().door_status==1 && passPointState!=0
-                            && iter_.value().orderAction==2){
-                        emit sigDoorSubTaskAction(iter_.value().doorIP,2,iter_.value().AGVIP);
-                        qDebug()<<iter_.value().doorIP<<"提交关门信号"<<passPointState<<" taskType:"<<agvStateItem.taskType
-                               <<"size:"<<iter_.value().NextPointList.size();
-
-                    }if(!iter_.value().NextPointList.contains(int(passPointState))
-                            && (iter_.value().door_Line==0 || iter_.value().door_status==0)
-                            && passPointState!=0  && iter_.value().orderAction==2){  //起始点
-                        iter_.value().orderAction=0;
-                        iter_.value().Point=0;
-                        iter_.value().AGVIP="";
-                        iter_.value().NextPointList.clear();
-                        emit sigDoorSubTaskAction(iter_.value().doorIP,2,iter_.value().AGVIP);
-                        qDebug()<<iter_.value().doorIP<<"关门到位 自动门空闲";
-                        doorSubTaskbool=true;
-                        agvCarTemp->Taskmove_Processbool=true;
-                        return;
-                    }
-
-                }
-
-                iter_++;
-            }
-
-            doorSubTaskbool=true;
-        }
-
-        doorSubTask doorSubTaskI=getdoorSubTask(AGVIP,TaskmoveList,agvStateItem);
-        if(doorSubTaskI.AGVIP!=""){//判断是否存在开门点
-            TaskmoveList.clear();
-            agvCarTemp->Device_door_Action(doorSubTaskI.doorIP,0,doorSubTaskI.Point);
-            qDebug()<<doorSubTaskI.doorIP<<"确认开门点-->AGVIP"<<AGVIP<<" 开门点:"<<doorSubTaskI.Point;
-            return;
-        }
-
-        if(!TaskmoveList.isEmpty()){
-            qDebug()<<AGVIP<<"TaskmoveList:"<<TaskmoveList.size();
-            agvCarTemp->TaskmoveList_Process_(TaskmoveList);
-        }else{
-            TaskmoveList.clear();
-            agvCarTemp->TaskmoveList_Process_(TaskmoveList);
-        }
     }else {
         qDebug()<<AGVIP<<"异常";
     }
@@ -268,7 +173,7 @@ void agvCarPool::ON_Device_door_Status(QString DeviceIP, int online, int DeviceS
                     }
                 }
             }
-            iter++;
+            ++iter;
         }
     }
 }
@@ -280,7 +185,8 @@ doorSubTask agvCarPool::getdoorSubTask(QString AGVIP, QMap<int, agvSubTask> Task
     while (iter1!=TaskmoveList.end()){
         QMap <int,doorSubTask>::iterator iter_= doorSubTaskMap.begin();//自动门开门信号
         while (iter_!=doorSubTaskMap.end()){
-             if(iter_.value().AGVIP==""  || (iter_.value().AGVIP== agvStateItem.agvIp && agvStateItem.doorPoint!=0)){
+             if(iter_.value().AGVIP==""  || (iter_.value().AGVIP== agvStateItem.agvIp
+                                             && agvStateItem.ActionItem.doorPoint!=0)){
                 if(iter_.value().door_acionI.Point==int(iter1.value().Point)
                         && iter_.value().door_acionI.NextPoint == int(iter1.value().NextPoint)){
                     iter_.value().AGVIP=AGVIP;
@@ -313,20 +219,15 @@ void agvCarPool::incomingConnection(qintptr newAgvCar)
     qDebug()<<agvCarItem->agvIp<<" 获取新的 Socket连接 AGV";
     if((agvCarItem != nullptr) && (threadItem != nullptr))
     {
-        for(int i=0;i<agvCarItem->agvCarSocketItemMap.keys(true).size();i++)
-        {
-            disconnect(agvCarItem->agvCarSocketItemMap.keys(true).at(i),SIGNAL(readyRead()),agvCarItem,SLOT(onReadyRead()));
-            agvCarItem->agvCarSocketItemMap.insert(agvCarItem->agvCarSocketItemMap.keys(true).at(i),false);
-        }
-
-        agvCarItem->agvCarSocketItemMap.insert(agvCarSocketItem,true);
-        agvCarSocketMap.insert(agvCarSocketItem,agvCarItem);
-        qDebug()<<agvCarItem->agvIp<<"agvCarSocketMap.insert";
 
         agvCarSocketItem->moveToThread(threadItem);
         connect(agvCarSocketItem,SIGNAL(readyRead()),agvCarItem,SLOT(onReadyRead()));
         connect(agvCarSocketItem,SIGNAL(disconnected()),this,SLOT(onAgvCarSocketDeleteLater()));
         connect(threadItem,SIGNAL(finished()),agvCarSocketItem,SLOT(deleteLater()));
+
+        agvCarItem->agvCarSocketItemMap.insert(agvCarSocketItem,true);
+        agvCarSocketMap.insert(agvCarSocketItem,agvCarItem);
+        qDebug()<<agvCarItem->agvIp<<"agvCarSocketMap.insert";
 
     }
 

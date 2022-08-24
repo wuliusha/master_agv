@@ -7,19 +7,220 @@ queryServer::queryServer(QObject *parent) : QObject(parent)
 
 }
 
-void queryServer::setCurrentServerInitItem(ServerInit CServerInit)
+void queryServer::setCurrentServerInitItem(ServerItem CServerItem, ServerInit CServerInit)
 {
-    ServerInitItem=CServerInit;
+    ALLServerInitItem.ServerInitItem=CServerInit;
+    ALLServerInitItem.CurrentServerItem=CServerItem;
 }
 
-ServerInit queryServer::getCurrentServerInitItem()
+allServerInit queryServer::getCurrentServerInitItem()
 {
-    return ServerInitItem;
+    return ALLServerInitItem;
 }
 
 QList<User_Info> queryServer::getUserInfoList()
 {
-    return ServerInitItem.UserInfoList;
+    return ALLServerInitItem.ServerInitItem.UserInfoList;
+}
+
+//**********************************任务查询********************************//
+QMap<int, SAPExcelInfo> queryServer::querySAPExcelInfoList(slecetSAP_Log slecetSAP_LogI)
+{
+    QMap<int, SAPExcelInfo> SAPExcelInfoTask;
+    connectBuilder build(ASMORDERDBSTR);
+    QSqlDatabase sqlDatabase =  build.getOpenDatabase();
+
+    QSqlQuery sqlQuery(sqlDatabase);
+    sqlQuery.setForwardOnly(true);
+
+    if(!slecetSAP_LogI.labelNoMap.isEmpty() || !slecetSAP_LogI.materialMap.isEmpty()){
+        QMap<QString,QString>selectMap;int action=0;//0标签号 1 件号
+        if(!slecetSAP_LogI.labelNoMap.isEmpty()){
+            selectMap=slecetSAP_LogI.labelNoMap;
+        }else if(!slecetSAP_LogI.materialMap.isEmpty()) {
+            selectMap=slecetSAP_LogI.materialMap;action=1;
+        }
+
+        QMap<QString,QString>::iterator iter =selectMap.begin();
+        while(iter !=selectMap.end()){
+            if(action==0){//标签号
+                sqlQuery.prepare("select * from sapExcelinfo "
+                                 "where  LabelNo =:LabelNo;");
+                sqlQuery.addBindValue(iter.value());
+            }else {
+                sqlQuery.prepare("select * from sapExcelinfo "
+                                 "where  containerCode =:containerCode;");
+                sqlQuery.addBindValue(iter.value());
+            }
+
+            if(sqlQuery.exec())
+            {
+                while(sqlQuery.next())
+                {
+                    SAPExcelInfo SAPExcelInfoI;
+                    SAPExcelInfoI.SAPTaskIndex=sqlQuery.value("SAPTaskIndex").toInt();//索引 唯一值
+                    if(SAPExcelInfoTask.contains(SAPExcelInfoI.SAPTaskIndex)){
+                        continue;
+                    }
+
+                    SAPExcelInfoI.taskType=sqlQuery.value("taskType").toString();        //任务类型  OUT-出库  IN-入库  MOVE-移库  Empty-返空箱
+                    SAPExcelInfoI.taskTypeDesc=sqlQuery.value("taskTypeDesc").toString();
+
+                    SAPExcelInfoI.taskId=sqlQuery.value("taskId").toString();          //任务编码 唯一性
+                    SAPExcelInfoI.taskId_ess=sqlQuery.value("taskId_ess").toString();      //夹抱机器人 任务编码 唯一性
+                    SAPExcelInfoI.taskId_agv=sqlQuery.value("taskId_agv").toString();      //举升机器人 任务编码 唯一性
+
+                    SAPExcelInfoI.taskStatus=sqlQuery.value("taskStatus").toInt();          //任务状态
+                    SAPExcelInfoI.taskStatusDesc=sqlQuery.value("taskStatusDesc").toString();  //任务状态注释
+
+                    SAPExcelInfoI.sourcestation=sqlQuery.value("sourcestation").toString();   //来源 入库为NULL，出库为库位
+                    SAPExcelInfoI.pickDesc_s=sqlQuery.value("pickDesc_s").toString();       //起始站点的对接码头
+
+                    SAPExcelInfoI.pickDesc_e=sqlQuery.value("pickDesc_e").toString();      //目标站点的对接码头
+                    SAPExcelInfoI.destination=sqlQuery.value("destination").toString();     //目的地。入库为库位，出库为线体
+
+                    SAPExcelInfoI.podIdDesc=sqlQuery.value("podIdDesc").toString();       //所属架位注释 -- MES
+                    SAPExcelInfoI.shelfBindesc=sqlQuery.value("shelfBindesc").toString();    //所属架位注释 -- ESS
+                    SAPExcelInfoI.containerCode=sqlQuery.value("containerCode").toString();   //容器编码 (即胶箱编码) ->唯一
+
+                    SAPExcelInfoI.oldIdDesc=sqlQuery.value("oldIdDesc").toString();       //所属架位注释 -- MES
+                    SAPExcelInfoI.oldBinDesc=sqlQuery.value("oldBinDesc").toString();         //改架前的 Bin   (用于AGV内部移库) -- ESS
+
+                    SAPExcelInfoI.newIdDesc=sqlQuery.value("newIdDesc").toString();       //所属架位注释 -- MES
+                    SAPExcelInfoI.newBinDesc=sqlQuery.value("newBinDesc").toString();         //改架后的 Bin   (用于AGV内部移库) -- ESS
+
+                    SAPExcelInfoI.cancelTask=sqlQuery.value("cancelTask").toInt();          //大于0  取消
+                    SAPExcelInfoI.Priority=sqlQuery.value("Priority").toDouble();       //出库任务 优先级 1-100 由高到低  默认值不变100
+                    SAPExcelInfoI.taskError=sqlQuery.value("taskError").toInt();           //任务错误代码
+                    SAPExcelInfoI.errortextEdit=sqlQuery.value("errortextEdit").toString();  //异常原因详细信息
+
+                    SAPExcelInfoI.lastuser=sqlQuery.value("lastuser").toString();          //操作员
+                    SAPExcelInfoI.taskTimer=QDateTime::currentDateTime();
+                    SAPExcelInfoI.creatTimer=sqlQuery.value("creatTimer").toDateTime();      //创建时间
+                    SAPExcelInfoI.finishTimer=sqlQuery.value("finishTimer").toDateTime();     //完成时间
+
+                /********************* MES 的订单物料信息 *********************/
+
+                    SAPExcelInfoI.LabelNo=sqlQuery.value("LabelNo").toString();        //贴纸凭证号
+                    SAPExcelInfoI.Material=sqlQuery.value("Material").toString();       //物料编码
+                    SAPExcelInfoI.customsType=sqlQuery.value("customsType").toString();    //类型属性
+
+                    SAPExcelInfoI.taskQty=sqlQuery.value("taskQty").toDouble();      //数量
+                    SAPExcelInfoI.MaterialListdesc=sqlQuery.value("MaterialListdesc").toString();     //物料编码 集合
+                    SAPExcelInfoI.MaterialList=SAPExcelInfoI.MaterialListdesc.split("&");             //物料编码 集合
+
+                    if(!SAPExcelInfoTask.contains(SAPExcelInfoI.SAPTaskIndex)){
+                        SAPExcelInfoTask.insert(SAPExcelInfoI.SAPTaskIndex,SAPExcelInfoI);
+                        //qDebug()<<"wait119:"<<SAPExcelInfoI.SAPTaskIndex<<SAPExcelInfoI.Material<<SAPExcelInfoI.taskStatus;
+                    }
+                    //qDebug()<<missionInfoI.ikey<<missionInfoI.updateQty<<sqlQuery.record();
+                }
+            }else {
+                qDebug()<<"queryNewMissionInfo"<<sqlQuery.record();
+            }
+            ++iter;
+        }
+
+    }else {
+        if(slecetSAP_LogI.taskType!=""){
+            if(slecetSAP_LogI.taskType=="new"){
+                sqlQuery.prepare("select * from sapExcelinfo "
+                                 "where taskStatus >=:taskStatus and taskStatus <=:taskStatus;");
+                sqlQuery.addBindValue(slecetSAP_LogI.taskStatus_s);
+                sqlQuery.addBindValue(slecetSAP_LogI.taskStatus_e);
+            }else{
+                sqlQuery.prepare("select * from sapExcelinfo "
+                                 "where taskType =:taskType and taskStatus >=:taskStatus and taskStatus <=:taskStatus "
+                                 "and creatTimer >=:creatTimer and creatTimer <=:creatTimer;");
+                sqlQuery.addBindValue(slecetSAP_LogI.taskType);
+                sqlQuery.addBindValue(slecetSAP_LogI.taskStatus_s);
+                sqlQuery.addBindValue(slecetSAP_LogI.taskStatus_e);
+                sqlQuery.addBindValue(slecetSAP_LogI.QDateTimeS);
+                sqlQuery.addBindValue(slecetSAP_LogI.QDateTimeE);
+            }
+        }else{
+            sqlQuery.prepare("select * from sapExcelinfo "
+                             "where taskStatus >=:taskStatus and taskStatus <=:taskStatus "
+                             "and creatTimer >=:creatTimer and creatTimer <=:creatTimer;");
+            sqlQuery.addBindValue(slecetSAP_LogI.taskStatus_s);
+            sqlQuery.addBindValue(slecetSAP_LogI.taskStatus_e);
+            sqlQuery.addBindValue(slecetSAP_LogI.QDateTimeS);
+            sqlQuery.addBindValue(slecetSAP_LogI.QDateTimeE);
+        }
+
+        if(sqlQuery.exec())
+        {
+            while(sqlQuery.next())
+            {
+                SAPExcelInfo SAPExcelInfoI;
+                SAPExcelInfoI.SAPTaskIndex=sqlQuery.value("SAPTaskIndex").toInt();          //索引 唯一值
+                if(SAPExcelInfoTask.contains(SAPExcelInfoI.SAPTaskIndex)){
+                    continue;
+                }
+
+                SAPExcelInfoI.taskType=sqlQuery.value("taskType").toString();               //任务类型  OUT-出库  IN-入库  MOVE-移库  Empty-返空箱
+                SAPExcelInfoI.taskTypeDesc=sqlQuery.value("taskTypeDesc").toString();
+
+                SAPExcelInfoI.taskId=sqlQuery.value("taskId").toString();                   //任务编码 唯一性
+                SAPExcelInfoI.taskId_ess=sqlQuery.value("taskId_ess").toString();           //夹抱机器人 任务编码 唯一性
+                SAPExcelInfoI.taskId_agv=sqlQuery.value("taskId_agv").toString();           //举升机器人 任务编码 唯一性
+                SAPExcelInfoI.floorId=sqlQuery.value("floorId").toString();                 //楼层走向  2F-3F 3F-2F
+
+                SAPExcelInfoI.taskStatus=sqlQuery.value("taskStatus").toInt();              //任务状态
+                SAPExcelInfoI.latstaskStatus=SAPExcelInfoI.taskStatus;                      //上一个任务状态   当前状态与上一状态不一致时更新数据库
+                SAPExcelInfoI.taskStatusDesc=sqlQuery.value("taskStatusDesc").toString();   //任务状态注释
+
+                SAPExcelInfoI.sourcestation=sqlQuery.value("sourcestation").toString();     //来源 入库为NULL，出库为库位
+                SAPExcelInfoI.pickDesc_s=sqlQuery.value("pickDesc_s").toString();           //起始站点的对接码头
+
+                SAPExcelInfoI.pickDesc_e=sqlQuery.value("pickDesc_e").toString();           //目标站点的对接码头
+                SAPExcelInfoI.destination=sqlQuery.value("destination").toString();         //目的地。入库为库位，出库为线体
+
+                SAPExcelInfoI.podIdDesc=sqlQuery.value("podIdDesc").toString();             //所属架位注释 -- MES
+                SAPExcelInfoI.shelfBindesc=sqlQuery.value("shelfBindesc").toString();       //所属架位注释 -- ESS
+                SAPExcelInfoI.containerCode=sqlQuery.value("containerCode").toString();     //容器编码 (即胶箱编码) ->唯一
+
+                SAPExcelInfoI.oldIdDesc=sqlQuery.value("oldIdDesc").toString();             //所属架位注释 -- MES
+                SAPExcelInfoI.oldBinDesc=sqlQuery.value("oldBinDesc").toString();           //改架前的 Bin   (用于AGV内部移库) -- ESS
+
+                SAPExcelInfoI.newIdDesc=sqlQuery.value("newIdDesc").toString();             //所属架位注释 -- MES
+                SAPExcelInfoI.newBinDesc=sqlQuery.value("newBinDesc").toString();           //改架后的 Bin   (用于AGV内部移库) -- ESS
+
+                SAPExcelInfoI.cancelTask=sqlQuery.value("cancelTask").toInt();              //大于0  取消
+                SAPExcelInfoI.Priority=sqlQuery.value("Priority").toDouble();               //出库任务 优先级 1-100 由高到低  默认值不变100
+                SAPExcelInfoI.taskError=sqlQuery.value("taskError").toInt();                //任务错误代码
+                SAPExcelInfoI.errortextEdit=sqlQuery.value("errortextEdit").toString();     //异常原因详细信息
+
+                SAPExcelInfoI.lastuser=sqlQuery.value("lastuser").toString();               //操作员
+                SAPExcelInfoI.taskTimer=QDateTime::currentDateTime();
+                SAPExcelInfoI.creatTimer=sqlQuery.value("creatTimer").toDateTime();         //创建时间
+                SAPExcelInfoI.finishTimer=sqlQuery.value("finishTimer").toDateTime();       //完成时间
+
+            /********************* MES 的订单物料信息 *********************/
+
+                SAPExcelInfoI.LabelNo=sqlQuery.value("LabelNo").toString();                 //贴纸凭证号
+                SAPExcelInfoI.Material=sqlQuery.value("Material").toString();               //物料编码
+                SAPExcelInfoI.customsType=sqlQuery.value("customsType").toString();         //类型属性
+                SAPExcelInfoI.storeCode=sqlQuery.value("storeCode").toString();             //仓号属性
+                SAPExcelInfoI.taskQty=sqlQuery.value("taskQty").toDouble();                  //数量
+                SAPExcelInfoI.MaterialListdesc=sqlQuery.value("MaterialListdesc").toString();//物料编码 集合
+                SAPExcelInfoI.MaterialList=SAPExcelInfoI.MaterialListdesc.split("&");        //物料编码 集合
+                //SAPExcelInfoI.MaterialListdesc= SAPExcelInfoI.MaterialList.join("&");
+
+                if(!SAPExcelInfoTask.contains(SAPExcelInfoI.SAPTaskIndex)){
+                    SAPExcelInfoTask.insert(SAPExcelInfoI.SAPTaskIndex,SAPExcelInfoI);
+                    //qDebug()<<"wait119:"<<SAPExcelInfoI.SAPTaskIndex<<SAPExcelInfoI.Material<<SAPExcelInfoI.taskStatus<<SAPExcelInfoI.taskTimer;
+                }
+                //qDebug()<<missionInfoI.ikey<<missionInfoI.updateQty<<sqlQuery.record();
+            }
+
+        }else {
+            qDebug()<<"querySAPExcelInfoList_T size ->"<<SAPExcelInfoTask.size()<<sqlQuery.record();
+        }
+
+    }
+    qDebug()<<"querySAPExcelInfoList_T size ->"<<SAPExcelInfoTask.size();
+    return SAPExcelInfoTask;
 }
 
 //获取 未处理的系统异常信息
@@ -137,90 +338,6 @@ QMap<QString, materialInfo> queryServer::querymaterialInfoMap()
     return materialInfoMap;
 }
 
-QMap<QString, materialShelfbin> queryServer::querymaterialshelfBinMap(shelfBinInfo shelfBinInfoItem)
-{
-    QMap<QString, materialShelfbin>materialshelfBinMap;
-    connectBuilder build(ASMORDERDBSTR);
-    QSqlDatabase sqlDatabase =  build.getOpenDatabase();
-    QSqlQuery sqlQuery1(sqlDatabase);
-    sqlQuery1.setForwardOnly(true);
-
-    sqlQuery1.prepare("select * from materialShelfbinMap "
-                     "where shelfBinIndex =:shelfBinIndex and containerIndex =:containerIndex;");
-    sqlQuery1.addBindValue(shelfBinInfoItem.shelfBinIndex);
-    sqlQuery1.addBindValue(shelfBinInfoItem.containerIndex);
-
-    if(sqlQuery1.exec())
-    {
-        while(sqlQuery1.next())
-        {
-            materialShelfbin materialShelfbinI;
-            materialShelfbinI.containerIndex=sqlQuery1.value("containerIndex").toInt();     //容器编码索引 ->唯一
-            materialShelfbinI.containerCode=sqlQuery1.value("containerCode").toString();    //容器编码 (即胶箱编码) ->唯一
-
-            materialShelfbinI.shelfBinIndex=sqlQuery1.value("shelfBinIndex").toInt();       //所属架位索引 ->唯一
-            materialShelfbinI.shelfBindesc=sqlQuery1.value("shelfBindesc").toString();      //所属架位注释 ->唯一
-
-            materialShelfbinI.materialNumber=sqlQuery1.value("materialNumber").toString();  //物料件号
-
-            materialShelfbinI.pcbListdesc=sqlQuery1.value("pcbListdesc").toString();        //PCB 集合
-            materialShelfbinI.pcbList=materialShelfbinI.pcbListdesc.split("&");
-            //QString pcbListdesc= materialShelfbinI.pcbList.join("&");
-
-            materialShelfbinI.status=sqlQuery1.value("status").toInt();                     //0 空闲  1任务占用中
-
-            materialShelfbinI.plant=sqlQuery1.value("plant").toString();                    //工厂
-            materialShelfbinI.storeCode=sqlQuery1.value("storeCode").toString();            //仓号
-            materialShelfbinI.base_unit=sqlQuery1.value("base_unit").toString();            //基础单位
-            materialShelfbinI.customsType=sqlQuery1.value("customsType").toString();        //报关类型
-
-            materialShelfbinI.realqty=sqlQuery1.value("realqty").toDouble();                //订单里数量
-            materialShelfbinI.checkqty=sqlQuery1.value("checkqty").toDouble();              //盘点数量
-
-            materialShelfbinI.creatTimer=sqlQuery1.value("creatTimer").toDateTime();        //上次盘点时间
-
-            materialShelfbinI.lastuser=sqlQuery1.value("lastuser").toString();              //上次盘点操作员
-            materialShelfbinI.lastCheckTimer=sqlQuery1.value("lastCheckTimer").toDateTime();//上次盘点时间
-
-            if(!materialshelfBinMap.contains(materialShelfbinI.containerCode)){
-                materialshelfBinMap.insert(materialShelfbinI.containerCode,materialShelfbinI);
-            }
-
-        }
-    }
-
-    return materialshelfBinMap;
-}
-
-shelfBinInfo queryServer::querymaterialshelfBinMap_(shelfBinInfo shelfBinInfoItem)
-{
-    shelfBinInfo shelfBinInfoI;
-    connectBuilder build(ASMORDERDBSTR);
-    QSqlDatabase sqlDatabase =  build.getOpenDatabase();
-    QSqlQuery sqlQuery1(sqlDatabase);
-    sqlQuery1.setForwardOnly(true);
-
-    sqlQuery1.prepare("select * from materialShelfbinMap "
-                     "where materialNumber =:materialNumber or containerCode =:containerCode or shelfBindesc =:shelfBindesc;");
-    sqlQuery1.addBindValue(shelfBinInfoItem.materialShelfbinI.materialNumber);
-    sqlQuery1.addBindValue(shelfBinInfoItem.containerCode);
-    sqlQuery1.addBindValue(shelfBinInfoItem.shelfBindesc);
-
-    if(sqlQuery1.exec())
-    {
-        while(sqlQuery1.next())
-        {
-            shelfBinInfo shelfBinInfoI;
-            shelfBinInfoI.containerIndex=sqlQuery1.value("containerIndex").toInt();     //容器编码索引 ->唯一
-            shelfBinInfoI.containerCode=sqlQuery1.value("containerCode").toString();    //容器编码 (即胶箱编码) ->唯一
-            shelfBinInfoI.shelfBinIndex=sqlQuery1.value("shelfBinIndex").toInt();       //所属架位索引 ->唯一
-            shelfBinInfoI.shelfBindesc=sqlQuery1.value("shelfBindesc").toString();      //所属架位注释 ->唯一
-            shelfBinInfoI.materialShelfbinI.materialNumber=sqlQuery1.value("materialNumber").toString();  //物料件号
-        }
-    }
-
-    return shelfBinInfoI;
-}
 
 QMap<int, record_log> queryServer::queryRecord_log_nowDate()
 {

@@ -11,12 +11,11 @@ Login::Login(QWidget *parent) :
     connect(LoginTimer,&QTimer::timeout,this,&Login::ON_LoginTimer);
     LoginTimer->start(1000);
 
-    IconHelper::Instance()->setIcon(ui->pushButton, 0xf007, 20);
-    IconHelper::Instance()->setIcon(ui->pushButton_2, 0xf111, 20);
-    ui->widget_2->setWindowOpacity(0.3);
+
+    //ui->widget_2->setWindowOpacity(0.3);
     //ui->widget_2->setAttribute(Qt::WA_TranslucentBackground);//设置窗口背景透明
-    ui->label->setAttribute(Qt::WA_TranslucentBackground);//设置窗口背景透明
-    ui->label_2->setAttribute(Qt::WA_TranslucentBackground);//设置窗口背景透明
+    //ui->label->setAttribute(Qt::WA_TranslucentBackground);//设置窗口背景透明
+    //ui->label_2->setAttribute(Qt::WA_TranslucentBackground);//设置窗口背景透明
     ui->PassWord->setEchoMode(QLineEdit::Password);
 
     QVariant value;int DATETYPE=0;

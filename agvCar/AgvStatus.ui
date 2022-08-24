@@ -6,18 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1674</width>
-    <height>523</height>
+    <width>1416</width>
+    <height>526</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>AGV STATUS</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="bottomMargin">
-    <number>0</number>
-   </property>
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <widget class="QTableWidget" name="agvShow">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -130,7 +127,7 @@ QHeaderView::section {
       <number>10</number>
      </property>
      <property name="columnCount">
-      <number>14</number>
+      <number>15</number>
      </property>
      <attribute name="horizontalHeaderCascadingSectionResizes">
       <bool>true</bool>
@@ -234,6 +231,11 @@ QHeaderView::section {
      <column>
       <property name="text">
        <string>状态</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>指令状态</string>
       </property>
      </column>
     </widget>

@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../managerinfo/Network/network_widget.h"
+#include "../record/Network/network_widget.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Network_Widget_t {
     QByteArrayData data[13];
-    char stringdata0[269];
+    char stringdata0[252];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -37,23 +37,23 @@ QT_MOC_LITERAL(2, 38, 0), // ""
 QT_MOC_LITERAL(3, 39, 23), // "on_Clear_Button_clicked"
 QT_MOC_LITERAL(4, 63, 30), // "on_comboBox_currentTextChanged"
 QT_MOC_LITERAL(5, 94, 4), // "arg1"
-QT_MOC_LITERAL(6, 99, 35), // "on_comboBox_Type_currentTextC..."
-QT_MOC_LITERAL(7, 135, 32), // "on_comboBox_2_currentTextChanged"
-QT_MOC_LITERAL(8, 168, 33), // "on_operateEdit_currentTextCha..."
-QT_MOC_LITERAL(9, 202, 23), // "on_stop_Button_released"
-QT_MOC_LITERAL(10, 226, 19), // "Network_WidgetTimer"
-QT_MOC_LITERAL(11, 246, 10), // "ON_Pressed"
-QT_MOC_LITERAL(12, 257, 11) // "ON_Released"
+QT_MOC_LITERAL(6, 99, 32), // "on_comboBox_2_currentTextChanged"
+QT_MOC_LITERAL(7, 132, 23), // "on_stop_Button_released"
+QT_MOC_LITERAL(8, 156, 21), // "on_pushButton_clicked"
+QT_MOC_LITERAL(9, 178, 30), // "on_taskType_currentTextChanged"
+QT_MOC_LITERAL(10, 209, 19), // "Network_WidgetTimer"
+QT_MOC_LITERAL(11, 229, 10), // "ON_Pressed"
+QT_MOC_LITERAL(12, 240, 11) // "ON_Released"
 
     },
     "Network_Widget\0on_Post_Button_clicked\0"
     "\0on_Clear_Button_clicked\0"
     "on_comboBox_currentTextChanged\0arg1\0"
-    "on_comboBox_Type_currentTextChanged\0"
     "on_comboBox_2_currentTextChanged\0"
-    "on_operateEdit_currentTextChanged\0"
-    "on_stop_Button_released\0Network_WidgetTimer\0"
-    "ON_Pressed\0ON_Released"
+    "on_stop_Button_released\0on_pushButton_clicked\0"
+    "on_taskType_currentTextChanged\0"
+    "Network_WidgetTimer\0ON_Pressed\0"
+    "ON_Released"
 };
 #undef QT_MOC_LITERAL
 
@@ -75,21 +75,21 @@ static const uint qt_meta_data_Network_Widget[] = {
        3,    0,   65,    2, 0x08 /* Private */,
        4,    1,   66,    2, 0x08 /* Private */,
        6,    1,   69,    2, 0x08 /* Private */,
-       7,    1,   72,    2, 0x08 /* Private */,
-       8,    1,   75,    2, 0x08 /* Private */,
-       9,    0,   78,    2, 0x08 /* Private */,
-      10,    0,   79,    2, 0x0a /* Public */,
-      11,    0,   80,    2, 0x0a /* Public */,
-      12,    0,   81,    2, 0x0a /* Public */,
+       7,    0,   72,    2, 0x08 /* Private */,
+       8,    0,   73,    2, 0x08 /* Private */,
+       9,    1,   74,    2, 0x08 /* Private */,
+      10,    0,   77,    2, 0x0a /* Public */,
+      11,    0,   78,    2, 0x0a /* Public */,
+      12,    0,   79,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString,    5,
     QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, QMetaType::QString,    5,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,    5,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -106,10 +106,10 @@ void Network_Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 0: _t->on_Post_Button_clicked(); break;
         case 1: _t->on_Clear_Button_clicked(); break;
         case 2: _t->on_comboBox_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 3: _t->on_comboBox_Type_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 4: _t->on_comboBox_2_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 5: _t->on_operateEdit_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 6: _t->on_stop_Button_released(); break;
+        case 3: _t->on_comboBox_2_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 4: _t->on_stop_Button_released(); break;
+        case 5: _t->on_pushButton_clicked(); break;
+        case 6: _t->on_taskType_currentTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 7: _t->Network_WidgetTimer(); break;
         case 8: _t->ON_Pressed(); break;
         case 9: _t->ON_Released(); break;

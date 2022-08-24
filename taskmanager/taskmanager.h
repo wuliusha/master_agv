@@ -26,6 +26,7 @@ public:
     int postStatuscount=0;
     QString robotCodeiKey="";          //机器人编码
     QString taskStatusiKey="";         //agvStatusiKey为空时: AGV系统往 MES服务器实时更新 任务的状态信息
+    QMap<QString,QString>currentlabelMap;
 
 
     void taskManagerInit();
@@ -38,9 +39,6 @@ public slots:
 
     void SlotsetCurrentItem(int row,int column);
 
-    //定时往 MES 更新 任务状态信息
-    void ONUP_SAPExcelInfo(SAPExcelInfo SAPExcelInfoI);
-
 
 public:
 
@@ -52,41 +50,34 @@ public:
 
     QMap<QString,QString>actionIdMap;                 //动作指令集
     SAPExcelInfo seletSAPExcelInfoI;
-    //QMap<int, SAPExcelInfo>seletSAPExcelInfoTask;
-    QMap<int, SAPExcelInfo>currentSAPExcelInfoTask;   //MES run task
-
-    QMap<int, SAPExcelInfo>getcurrentSAPExcelInfoTask(QMap<int, SAPExcelInfo>SAPExcelInfoTask);
+    QMap<int, SAPExcelInfo>seletSAPExcelInfoTask;
 
     void tableWidget_Show();                          //tableWidget 更新显示
     QList<RW_Excel>TableWidget();                     //任务列表
 
-public slots:
-    void ON_Pressed();
-
-    void ON_Released();
 signals:
-    void sig_deleteSAPExcelInfoTask(QMap<int, SAPExcelInfo>seletSAPExcelInfoTask);
-
-    void sig_UPSAPExcelInfoTask(QMap<int, SAPExcelInfo>seletSAPExcelInfoTask,ESS_Request ESS_RequestI,QString taskType);      //更新SAP 任务状态
+    void sig_deleteSAPExcelInfoTask(SAPExcelInfo seletSAPExcelInfoI);
 
 private slots:
 
     void on_Delete_Button_clicked();
 
-    void on_taskStatusBox_ESS_currentTextChanged(const QString &arg1);
-
-    void on_taskStatusBox_AGV_currentTextChanged(const QString &arg1);
-
     void on_Qury_Button_clicked();
 
      void on_Cancel_Button_clicked();
+
+     void on_unbundle_clicked();
+
+     void on_rebundle_clicked();
+
+     void on_unbundle_ess_clicked();
+
 private:
     Ui::taskManager *ui;
 
     bool checkBoxbool=false;
     QList<QPushButton *>Indexbtns;
     QList<QPushButton *>Actionbtns;
-    QList<QPushButton *>Actionbtns2;
 
     wrexcelprocess *wrexcelprocessItiem;//Excel 读写
 

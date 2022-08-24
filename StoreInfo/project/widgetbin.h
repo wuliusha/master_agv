@@ -53,7 +53,7 @@ public:
     QPixmap *pix;
     QColor color;
 
-    int podId=0;
+    QString podId="";
     int layer=0;
     int side=0;
 

@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QPoint>
 #include "agvCar/agvcarpool.h"
-#include "sql_single/query_single.h"
 
 struct mapPoint{
     double cardPoint=0.00;
@@ -27,7 +26,7 @@ public:
     explicit PointInput(QWidget *parent = 0);
     ~PointInput();
 
-    void setPoint(const QPointF& tempPoint);
+    void setPoint(const QPointF& tempPoint,int floor);
     mapPoint getMapPoint();
     void ONUPdatanowPoint(mapPoint mapPointI,QString Action);
 

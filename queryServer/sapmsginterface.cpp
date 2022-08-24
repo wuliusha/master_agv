@@ -67,9 +67,6 @@ void sapMsgInterface::ReadResponse(QNetworkReply *Reply)
                             WebServiceItiemMap[i].NetworkRepItiem->deleteLater();//关闭
                             WebServiceItiemMap.removeAt(i);
                             i--;
-
-                            CurrentSendI.ReplyData=ReplyData;
-                            CurrentSendI.Errorinfo="";
                         }
                     }
                 }
@@ -92,10 +89,6 @@ void sapMsgInterface::ReadResponse(QNetworkReply *Reply)
                     JsonAnalyse = QJsonDocument::fromJson(ReplyData,&JsonError);
                     //qDebug()<<QDateTime::currentDateTime().toString("yyyy-MM-dd_hh:mm:ss")<<"ikey:"<<WebServiceItiemMap[i].ikey<<"size:"<<WebServiceItiemMap.size();
                     qDebug()<<"Errorinfo:"<<Errorinfo<<Errorinfo1<<Reply->error();
-
-                    CurrentSendI.ReplyData=ReplyData;
-                    CurrentSendI.Errorinfo=QDateTime::currentDateTime().toString("yyyy-MM-dd_hh:mm:ss")+"   "+
-                            Errorinfo+Errorinfo1;
 
                     ReplyJson.insert("result","E1");
                     ReplyJson.insert("message","请求超时");
@@ -159,8 +152,13 @@ void sapMsgInterface::ONReplyError(WebServiceItiem WebServiceItiemI)
 void sapMsgInterface::analysReplyJson(QString iKey, QJsonDocument JsonAnalyse, QString actionType,QString positionCode)
 {
     QJsonObject ReplyJson = JsonAnalyse.object();//取得最外层这个大对象
-    if(actionType=="action0"){
-         ReplyJson_robot(iKey,ReplyJson);        //获取Robot信息返回
+    if(actionType=="action0" || actionType=="action1"){
+         if(actionType=="action0"){
+             ReplyJson_robot(iKey,ReplyJson);        //获取Robot信息返回
+         }if(actionType=="action1"){
+             ReplyJson_taskCode(iKey,ReplyJson);     //获取Robot信息返回
+         }
+
     }else{
         if(actionType=="action21" || actionType=="action22"){
             ReplyJson_Msg_MES(iKey,ReplyJson,actionType);                   //MES 接口返回
@@ -183,13 +181,8 @@ void sapMsgInterface::setSapPathMap()
 
     QSqlQuery sqlQuery(sqlDatabase);
     sqlQuery.setForwardOnly(true);
-    //sqlQuery.prepare("select * from sapPath_New;");
 
-    if(currentsapPath==30){
-        sqlQuery.prepare("select * from sapPath_New;");
-    }else {
-        sqlQuery.prepare("select * from sapPath;");
-    }
+    sqlQuery.prepare("select * from sapPath;");
 
     if(sqlQuery.exec())
     {
@@ -216,36 +209,12 @@ void sapMsgInterface::setSapPathMap()
                 }
                 sapPathI.Path=sapPathI.Path+path;
             }
-
-            //qDebug()<<sapPathI.Id<<sapPathI.Path;
-
             sapPathI.Type=sqlQuery.value("Type").toString();        //路径类型 发料时根据类型 选择路径
             sapPathI.PathName=sqlQuery.value("PathName").toString();
             sapPathMap.insert(sapPathI.Id,sapPathI);
         }
     }
 
-}
-
-void sapMsgInterface::setCurrentSend(CurrentSend CurrentSend0)
-{
-    CurrentSendI=CurrentSend0;
-}
-
-CurrentSend sapMsgInterface::getCurrentSend()
-{
-    return CurrentSendI;
-}
-
-void sapMsgInterface::setCurrentSend_(CurrentSend CurrentSend0)
-{
-    //qDebug()<<" setCurrentSend_:"<<CurrentSend0.UrlPath<<CurrentSend0.ReplyData<<CurrentSend0.postJson;
-    CurrentSendI_=CurrentSend0;
-}
-
-CurrentSend sapMsgInterface::getCurrentSend_()
-{
-    return CurrentSendI_;
 }
 
 QMap<int ,sapPath > sapMsgInterface::getsapPathMap()
@@ -257,8 +226,6 @@ void sapMsgInterface::setLabelMsgclear()
 {
     WebServiceMap.clear();
 }
-
-
 
 //<<<<<<<<<<WS01<<<<<<<<<<<<
 void sapMsgInterface::getLabelMsg(QString LabelNo, QString UserBadge,int pathId)
@@ -274,7 +241,6 @@ void sapMsgInterface::getLabelMsg(QString LabelNo, QString UserBadge,int pathId)
     if(!WebServiceMap.contains(LabelNo)){
         WebServiceMap.insert(WebServiceI.LabelNo,WebServiceI);
     }
-
 }
 
 //<<<<<<<<<<WS01 Reply<<<<<<<<<<<<
@@ -362,6 +328,64 @@ ESSRobot sapMsgInterface::GetMsgRecv_robot(QString iKey)
     return ESSRobotI;
 }
 
+void sapMsgInterface::ReplyJson_taskCode(QString iKey, QJsonObject ReplyJsonI)
+{
+    if(ReplyJsonI.isEmpty()){
+        if(!taskCodeInfoMap.contains(iKey)){
+            taskCodeInfoMap.insert(iKey,"postFail");//提交失败
+            qDebug()<<"ReplyJson_taskCode 提交失败--->iKey:"<<iKey;
+        }
+        return;
+    }
+
+    QString msg=ReplyJsonI.value("msg").toString();
+    if(msg=="success"){
+        QJsonObject ReplyJson;
+        QJsonArray rootFruitList=ReplyJsonI.value("data").toArray();
+        QJsonValue value = ReplyJsonI.value("data");//第一级对象 的值
+        if(value.isObject()){  //判读第二级对象是否存在
+            ReplyJson=value.toObject();
+            QJsonArray rootFruitList=ReplyJson.value("tasks").toArray();
+            QJsonValue value = ReplyJson.value("tasks");//第一级对象 的值
+            if(value.isObject()){  //判读第二级对象是否存在
+                QJsonObject ReJson=value.toObject();
+            }else if(value.isArray() && !rootFruitList.isEmpty()){  //判读第二级对象是以数组形式存在
+                for(int i=0;i<rootFruitList.size();i++){
+                    QJsonObject ReJson=value[i].toObject();
+                    QString taskCode =ReJson.value("taskCode").toString();
+                    QString taskStatus =ReJson.value("taskStatus").toString();
+                    QString actionType =ReJson.value("actionType").toString();
+                    QString robotCode =ReJson.value("robotCode").toString();
+                    QString containerCode =ReJson.value("containerCode").toString();
+                    QString stationCode =ReJson.value("stationCode").toString();
+                    QString locationCode =ReJson.value("locationCode").toString();
+                    if(!taskCodeInfoMap.contains(iKey)){
+                        taskCodeInfoMap.insert(iKey,taskStatus);
+//                        qDebug()<<"实时获取 ESS 任务执行状态 S--->iKey:"<<iKey<<" taskCode:"<<taskCode
+//                               <<" taskStatus:"<<taskStatus<<" actionType:"<<actionType
+//                              <<" robotCode:"<<robotCode<<" containerCode:"<<containerCode
+//                              <<" stationCode:"<<stationCode<<" locationCode:"<<locationCode;
+                    }
+                }
+            }
+        }else{
+            qDebug()<<" ReplyJson_robot-->JSON对象获取失败 ReplyJsonI:"<<ReplyJsonI;
+        }
+    }
+
+}
+
+QString sapMsgInterface::GetMsgRecv_taskCode(QString iKey)
+{
+    QString taskStatus="";
+    if(taskCodeInfoMap.contains(iKey)){
+        taskStatus=taskCodeInfoMap.value(iKey);
+        taskCodeInfoMap.remove(iKey);
+        qDebug()<<"<<<<< get GetMsgRecv_taskCode <<<<< iKey:"<<iKey<<" taskStatus:"<<taskStatus<<" size:"<<taskCodeInfoMap.size();
+    }
+    return taskStatus;
+}
+
 void sapMsgInterface::ReplyJson_Msg_MES(QString iKey, QJsonObject ReplyJson,QString actionType)
 {
     ReplyMsg ReplyMsgI;
@@ -374,10 +398,9 @@ void sapMsgInterface::ReplyJson_Msg_MES(QString iKey, QJsonObject ReplyJson,QStr
         ReplyMsgI.errorMsg="提交失败";
     }
     ReplyMsgI.ReplyJson=ReplyJson;
-    if(actionType!="action22"){
-        ReplyMsgMap.insert(iKey,ReplyMsgI);
-        qDebug()<<"<<<<< set ReplyJson_Msg_MES <<<<< iKey:"<<iKey<<" status:"<<ReplyMsgI.status<<" errorMsg:"<<ReplyMsgI.errorMsg<<" Json:"<<ReplyMsgI.ReplyJson;
-    }
+
+    ReplyMsgMap.insert(iKey,ReplyMsgI);
+    qDebug()<<"<<<<< set ReplyJson_Msg_MES <<<<< iKey:"<<iKey<<" status:"<<ReplyMsgI.status<<" errorMsg:"<<ReplyMsgI.errorMsg<<" Json:"<<ReplyMsgI.ReplyJson;
 
 }
 
@@ -422,7 +445,7 @@ ReplyMsg sapMsgInterface::GetMsgRecv_Msg(QString iKey)
     if(ReplyMsgMap.contains(iKey)){
         ReplyMsgI=ReplyMsgMap.value(iKey);
         ReplyMsgMap.remove(iKey);
-        qDebug()<<"<<<<< get GetMsgRecv_Msg <<<<< keyId:"<<iKey<<" status:" <<ReplyMsgI.status<<" errorMsg:"<<ReplyMsgI.errorMsg<<ReplyMsgI.datalist.size();
+        qDebug()<<"<<<<< get GetMsgRecv_Mes <<<<< keyId:"<<iKey<<" status:" <<ReplyMsgI.status<<" errorMsg:"<<ReplyMsgI.errorMsg<<ReplyMsgI.datalist.size();
     }
     return ReplyMsgI;
 }
@@ -440,29 +463,28 @@ QJsonObject sapMsgInterface::posttaskCodes_WW(QString iKey, WWYLPOST WWYLPOSTII)
 {
     //0查询状态  1任务查询  2出库  3移库  4回库  5任务取消
     QJsonObject ReJson;
-    ReJson.insert("taskId",WWYLPOSTII.taskId);
-    ReJson.insert("operate",WWYLPOSTII.operate);//操作,IN-入库，OUT-出库
-    ReJson.insert("boxNo",WWYLPOSTII.boxNo);//箱号
-    ReJson.insert("source",WWYLPOSTII.source);      //来源  入库为NULL，出库为库位
-    ReJson.insert("destination",WWYLPOSTII.destination);//目的地。入库为仓库，出库为线体
-
+    ReJson.insert("taskId",WWYLPOSTII.taskId);            //任务唯一编码
+    ReJson.insert("taskType",WWYLPOSTII.taskType);        //操作,IN-入库，OUT-出库
     /*******下达订单任务************/
     if(WWYLPOSTII.actionId=="WS01"){
-        ReJson.insert("proNo",WWYLPOSTII.proNo);//产品编码
-        ReJson.insert("pcbNum",WWYLPOSTII.pcbNum);//pcb数量
+        ReJson.insert("boxNo",WWYLPOSTII.boxNo);              //箱号
+        ReJson.insert("proNo",WWYLPOSTII.proNo);              //工单号
+        ReJson.insert("boxNum",WWYLPOSTII.boxNum.toInt());            //数量
+        ReJson.insert("source",WWYLPOSTII.source);            //只有在移库时不为空
+        ReJson.insert("destination",WWYLPOSTII.destination);  //目的地。入库为仓库，出库为线体
     }
 
     /*******返回任务状态************/
     if(WWYLPOSTII.actionId=="WS02"){
-        ReJson.insert("resultStatus",WWYLPOSTII.resultStatus);//执行结果,1-开始执行，2-执行中，3执行失败，4-执行成功
-    }
 
-    QJsonArray rootFruitList;
-    for(int i=0;i<WWYLPOSTII.pcbList.size();i++){
-        rootFruitList.append(WWYLPOSTII.pcbList[i]);
-    }
-    ReJson.insert("pcbList",rootFruitList);
+        ReJson.insert("boxNo",WWYLPOSTII.boxNo);
+        ReJson.insert("proNo",WWYLPOSTII.proNo);
+        ReJson.insert("taskStatus",WWYLPOSTII.taskStatus);
+        ReJson.insert("taskStatusDesc",WWYLPOSTII.taskStatusDesc);
+        ReJson.insert("current",WWYLPOSTII.source);
+        ReJson.insert("destination",WWYLPOSTII.destination);
 
+    }
     //qDebug()<<iKey<<ReJson;
     return  ReJson;
 }
@@ -572,7 +594,8 @@ QJsonObject sapMsgInterface::postcontainerCode_actionId(QString iKey, ESS_Reques
         tasksJson.insert("containerCode",ESS_RequestI.containerCode); //货箱编码
         tasksJson.insert("positionCode",ESS_RequestI.positionCode);   //容器入场 / 容器离场
     }if(ESS_RequestI.actionId=="action8"){
-
+        tasksJson.insert("containerCode",ESS_RequestI.containerCode); //货箱编码
+        tasksJson.insert("positionCode",ESS_RequestI.shelfBindesc);   //容器入场 / 容器离场
     }if(ESS_RequestI.actionId=="action9"){
         tasksJson.insert("containerCode",ESS_RequestI.containerCode); //货箱编码
         tasksJson.insert("containerTypeCode","C"); //货箱编码
@@ -581,19 +604,15 @@ QJsonObject sapMsgInterface::postcontainerCode_actionId(QString iKey, ESS_Reques
 
     QJsonArray rootFruitList;
     rootFruitList.append(tasksJson);
-
     if(ESS_RequestI.actionId=="action6"){
         ReJson.insert("containerMoveIns",rootFruitList);
     }if(ESS_RequestI.actionId=="action7"){
         ReJson.insert("containerMoveOuts",rootFruitList);
     }if(ESS_RequestI.actionId=="action8"){
-        QJsonArray rootFruitListI;
-        rootFruitListI.append("A000000001");
-        ReJson.insert("containerCodes",rootFruitListI);
+        ReJson.insert("containerMoveOuts",rootFruitList);
     }if(ESS_RequestI.actionId=="action9"){
         ReJson.insert("containerAdds",rootFruitList);
     }
-
     qDebug()<<iKey<<ReJson;
     return  ReJson;
 }
@@ -640,7 +659,7 @@ QJsonObject sapMsgInterface::posttaskCodes_actionId_Map(QString iKey, QMap<QStri
 
         rootFruitList.append(tasksJson);
 
-        iter++;
+        ++iter;
     }
 
     /********** 任务指令 ************/
@@ -736,7 +755,6 @@ void sapMsgInterface::setWebService_Get(QString LabelNo, QString UrlPath,
     WebServiceItiem0.LabelNo=LabelNo;
     WebServiceItiem0.NetworkRepItiem=NetworkReply;
     WebServiceItiemMap.append(WebServiceItiem0);
-    CurrentSendI.UrlPath=UrlPath;
 
     qDebug()<<"ikey:"<<WebServiceItiem0.ikey<<" Send UrlPath: "<<UrlPath;
 
@@ -773,10 +791,7 @@ void sapMsgInterface::setWebService_Post(QString iKey,QString UrlPath, QJsonObje
     WebServiceItiem0.NetworkRepItiem=NetworkReply;
     WebServiceItiemMap.append(WebServiceItiem0);
 
-    CurrentSendI.UrlPath=UrlPath;
-    CurrentSendI.postJson=postJson;
-
-    if(Type!="action0" && Type!="action22"){
+    if(Type!="action0" && Type!="action1"){
         qDebug()<<"Post-->UrlPath: "<<UrlPath;
         qDebug()<<"Post-->postJson: "<<postJson;
     }
@@ -811,9 +826,6 @@ void sapMsgInterface::setWebService_Post_WS06(QString iKey, QString UrlPath, QJs
     WebServiceItiem0.NetworkRepItiem=NetworkReply;
     WebServiceItiemMap.append(WebServiceItiem0);
 
-    CurrentSendI.UrlPath=UrlPath;
-    //CurrentSendI.postJson=postJson;
-
     if(Type!="action0" && Type!="action22"){
         qDebug()<<"Post-WS06->UrlPath: "<<UrlPath;
         qDebug()<<"Post-WS06->postJson: "<<postJson;
@@ -846,9 +858,6 @@ void sapMsgInterface::setWebService_SAOP_Post(QString iKey, QString UrlPath, QDo
     WebServiceItiem0.doc=doc;    //请求数据
     WebServiceItiem0.NetworkRepItiem=NetworkReply;
     WebServiceItiemMap.append(WebServiceItiem0);
-
-    CurrentSendI.UrlPath=UrlPath;
-    CurrentSendI.postdoc=doc;
 
     if(Type!="action0" && Type!="action22"){
         qDebug()<<"--SAOP-->UrlPath: "<<UrlPath;

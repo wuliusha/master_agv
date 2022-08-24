@@ -29,8 +29,6 @@ public:
     //读取每个楼层的AGV并创建
     void initAgvFloorMap();
 
-
-
 signals:
 
     //发送所有AGV状态

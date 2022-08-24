@@ -1,4 +1,4 @@
-#include "CRCDataCale.h"
+#include "crcdatacale.h"
 #include <QDebug>
 
 /* CRC 高位字节值表 */
@@ -62,7 +62,7 @@ const unsigned char   auchCRCLo[] = {
 //计算CRC码
 unsigned short crc16(unsigned char *puchMsg, unsigned short usDataLen)
 {
- unsigned  char uchCRCHi = 0xFF ;			/* 高CRC字节初始化  */
+ unsigned char uchCRCHi = 0xFF ;			/* 高CRC字节初始化  */
  unsigned char uchCRCLo = 0xFF ;			/* 低CRC 字节初始化 */
  unsigned short uIndex ;				    /* CRC循环中的索引  */
  unsigned short r_crc;

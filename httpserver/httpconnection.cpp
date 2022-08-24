@@ -56,7 +56,7 @@ void HttpConnection::parseRequest()
     {
         m_socket->waitForReadyRead(100);
         QByteArray ReplyData = m_socket->readAll();
-        //qDebug() << "ReplyData--->>" << ReplyData;
+        qDebug() << "ReplyData--->>" << ReplyData;
 
         QString ClientIP=m_socket->peerAddress().toString().mid(7,m_socket->peerAddress().toString().size());
         QString str = QString(ReplyData);
@@ -119,7 +119,7 @@ ReplyJson HttpConnection::ReplyJson_action(QByteArray ReplyData,QString taskType
         ReplyData = pcbList[1].toLatin1().replace("\\\"","\"");  // QString转QByteArray方法  并消除转义符 /** \ **/
     }
 
-    ReplyJson ReplyJsonI; QJsonObject ReplyJson;
+    ReplyJson ReplyJsonI;
     QJsonDocument JsonAnalyse; QJsonParseError JsonError;
     JsonAnalyse = QJsonDocument::fromJson(ReplyData,&JsonError);
     if(JsonError.error == QJsonParseError::NoError){
@@ -148,7 +148,7 @@ ReplyJson HttpConnection::ReplyJson_action(QByteArray ReplyData,QString taskType
         qDebug()<<"JsonError error:"<<JsonError.error<<JsonAnalyse;
     }
     qDebug()<<"ReplyJson-->action:"<<ReplyJsonI.taskType<<" error:"<<JsonError.error
-           <<ReplyJson;
+           <<ReplyJsonI.ReplyJson;
     return ReplyJsonI;
 }
 

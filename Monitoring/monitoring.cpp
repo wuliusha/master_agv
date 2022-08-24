@@ -28,6 +28,13 @@ void monitoring::monitoringTimeout()
         ON_signalPoint(m_Image->getmousePoint(),"left");
     }if(m_Image_2->left_Double){
         ON_signalPoint(m_Image_2->getmousePoint(),"left");
+    }if(m_Image->right_Double || m_Image_2->right_Double){
+        if(AgvItemWidgetI->isVisible()){
+            AgvItemWidgetI->setVisible(false);
+        }else{
+            AgvItemWidgetI->setVisible(true);
+        }
+        m_Image->right_Double=false; m_Image_2->right_Double=false;
     }
 
     if(!PointInputI->currentMapPoint.isEmpty()){
@@ -38,43 +45,29 @@ void monitoring::monitoringTimeout()
 
 void monitoring::ON_signalPoint(QPointF mousePoint, QString Type)
 {
+    int floor=2;
     PointInputI->setVisible(false);
-    if(mousePoint.x()>1800.00 || mousePoint.x()<50.00){
+    if(mousePoint.x()>860.00 || mousePoint.x()<-860.00){
         if(ui->stackedWidget->currentIndex()==0){
+            floor=3;
             ui->stackedWidget->setCurrentIndex(1);
         }else{
             ui->stackedWidget->setCurrentIndex(0);
         }
-        for(int i=0;i<AgvItemcarList.length();i++){
-            AgvItemcarList[i]->setVisible(false);
-            qDebug()<<ui->stackedWidget->currentIndex()<<AgvItemcarList[i]->floor<<AgvItemcarList[i]->agvip;
-            if(ui->stackedWidget->currentIndex()==0 && AgvItemcarList[i]->floor==2){
-                AgvItemcarList[i]->setVisible(true);
-            }if(ui->stackedWidget->currentIndex()==1 && AgvItemcarList[i]->floor==3){
-                AgvItemcarList[i]->setVisible(true);
-            }
-        }
     }else{
         mousePoint.setX(mousePoint.x());//937.5  268.5
         mousePoint.setY(mousePoint.y());
-
+        if(ui->stackedWidget->currentIndex()==1){
+            floor=3;
+        }
         PointInputI->move(600,300);
-        PointInputI->setPoint(mousePoint);
+        PointInputI->setPoint(mousePoint,floor);
         PointInputI->setVisible(true);
     }
 
     QPixmap m_pix=m_Image->getQGraphicsViewWH();
     qDebug()<<ui->stackedWidget->currentIndex()<<Type<<mousePoint.x()<<mousePoint.y()<<"   m_Image :"<<m_pix.width()<<m_pix.height();
 
-}
-
-void monitoring::sigAgvItemClick()
-{
-    if(AgvItemWidgetI->isVisible()){
-        AgvItemWidgetI->setVisible(false);
-    }else{
-        AgvItemWidgetI->setVisible(true);
-    }
 }
 
 void monitoring::OpenImage(QImage image)
@@ -87,7 +80,7 @@ void monitoring::OpenImage(QImage image)
     m_Image->setQGraphicsViewWH(nwith,nheight);//将界面控件Graphics View的width和height传进类m_Image中
     qgraphicsScene->addItem(m_Image);//将QGraphicsItem类对象放进QGraphicsScene中
     m_Image->SesetItemPos(3.08);//设置初始化时大小
-
+    m_Image->floor=2;
     //connect(m_Image,&ImageWidget::signalPoint,this,&monitoring::ON_signalPoint);
 
     qgraphicsScene->setSceneRect(0,0,this->width(),this->height());
@@ -100,15 +93,15 @@ void monitoring::OpenImage(QImage image)
 
 void monitoring::OpenImage_2(QImage image)
 {
-    QPixmap ConvertPixmap=QPixmap::fromImage(image);//The QPixmap class is an off-screen image representation that can be used as a paint device
-    QGraphicsScene  *qgraphicsScene = new QGraphicsScene;//要用QGraphicsView就必须要有QGraphicsScene搭配着用
-    m_Image_2 = new ImageWidget(&ConvertPixmap);//实例化类ImageWidget的对象m_Image，该类继承自QGraphicsItem，是自己写的类
-    int nwith = ui->ImageGraphic_2->width();//获取界面控件Graphics View的宽度
-    int nheight = ui->ImageGraphic_2->height();//获取界面控件Graphics View的高度
-    m_Image_2->setQGraphicsViewWH(nwith,nheight);//将界面控件Graphics View的width和height传进类m_Image中
+    QPixmap ConvertPixmap=QPixmap::fromImage(image);        //The QPixmap class is an off-screen image representation that can be used as a paint device
+    QGraphicsScene  *qgraphicsScene = new QGraphicsScene;   //要用QGraphicsView就必须要有QGraphicsScene搭配着用
+    m_Image_2 = new ImageWidget(&ConvertPixmap);            //实例化类ImageWidget的对象m_Image，该类继承自QGraphicsItem，是自己写的类
+    int nwith = ui->ImageGraphic_2->width();                //获取界面控件Graphics View的宽度
+    int nheight = ui->ImageGraphic_2->height();             //获取界面控件Graphics View的高度
+    m_Image_2->setQGraphicsViewWH(nwith,nheight);           //将界面控件Graphics View的width和height传进类m_Image中
     qgraphicsScene->addItem(m_Image_2);//将QGraphicsItem类对象放进QGraphicsScene中
     m_Image_2->SesetItemPos(19.20);//设置初始化时大小
-
+    m_Image_2->floor=3;
     //connect(m_Image,&ImageWidget::signalPoint,this,&monitoring::ON_signalPoint);
     qgraphicsScene->setSceneRect(0,0,this->width(),this->height());
 
@@ -134,7 +127,6 @@ void monitoring::monitoring_Init()
     OpenImage_2(QImage(":/image/Background_3f.png"));//界面缩放初始化
 
     monitoring_sqlInit();
-
     ui->stackedWidget->setCurrentIndex(0);
 
 }
@@ -153,36 +145,20 @@ void monitoring::monitoring_sqlInit()
         {
             if(sqlQuery.value("enable").toInt() == 1)
             {
-                AgvItem *AgvItemI=new AgvItem(this,sqlQuery.value("AgvId").toInt());
-                AgvItemI->agvip=sqlQuery.value("AGVIP").toString();
-                AgvItemI->agvNum=sqlQuery.value("AgvId").toInt();
-                AgvItemI->floor=sqlQuery.value("floornum").toInt();
-                AgvItemI->color=sqlQuery.value("agvColor").toString();
-
-                AgvItemI->sWidth=45;
-                AgvItemI->sHeight=45;
-                AgvItemI->resize(50,40);
-
-                AgvItemI->angle=90;
-                AgvItemI->showX=1830;
-                AgvItemI->showY=30;
-                AgvItemI->move(AgvItemI->showX,AgvItemI->showY);
-
-                AgvItemI->setCursor(Qt::CrossCursor);
-                if(AgvItemI->floor==2){
-                    AgvItemI->setVisible(true);
-                }else{
-                    AgvItemI->setVisible(false);
-                }
-                connect(AgvItemI,&AgvItem::sigAgvItemClick,this,&monitoring::sigAgvItemClick);
-
+                AgvItem AgvItemI;
+                AgvItemI.agvip=sqlQuery.value("AGVIP").toString();
+                AgvItemI.agvNum=sqlQuery.value("AgvId").toInt();
+                AgvItemI.floor=sqlQuery.value("floornum").toInt();
+                AgvItemI.color=sqlQuery.value("agvColor").toString();
+                AgvItemI.angle=180;
                 AgvItemcarList.append(AgvItemI);
                 //qDebug()<<AgvItemI->floor<<AgvItemI->agvip<<AgvItemI->color<<AgvItemcarList.size();
-
             }
-
         }
     }
+
+    m_Image->AgvItemcarList=AgvItemcarList;
+    m_Image_2->AgvItemcarList=AgvItemcarList;
 
 }
 
@@ -190,34 +166,34 @@ void monitoring::ON_AgvStateWidget(agvState agvStateItemI)
 {
 //    qDebug()<<"monitoring: "<<agvStateItemI.agvIp<<agvStateItemI.agvFinishInit<<agvStateItemI.passPointState
 //           <<agvStateItemI.isFrontLaserNearInducedState<<agvStateItemI.currentBatteryVoltageState;
-
+    if(!boolagvState){return;}
+    boolagvState=false;                            //槽函数 保护机制
     for(int i=0;i<AgvItemcarList.length();i++){
-        if(AgvItemcarList[i]->agvip==agvStateItemI.agvIp){
-            AgvItemcarList[i]->color="#6950a1";
-            if(agvStateItemI.isFrontLaserNearInducedState){//AGV前面近距离激光感应   "障碍：停车"
-                AgvItemcarList[i]->color="#8B864E";
-            }if(agvStateItemI.CurrentDestpoint!=0){//有任务
-                 AgvItemcarList[i]->color="#98FB98";
-            }if((agvStateItemI.currentErrorCodeState!="0" ||agvStateItemI.lineEdit_timer>15
-                || agvStateItemI.currentBatteryVoltageState.toInt()<490)
-                    && agvStateItemI.agvFinishInit){//错误报警  电压过低报警
-                AgvItemcarList[i]->color="#CD3333";
+        if(AgvItemcarList[i].agvip==agvStateItemI.agvIp){
+            AgvItemcarList[i].color="#764d39";
+            if(agvStateItemI.isFrontLaserNearInducedState
+                    || agvStateItemI.isRearLaserNearInducedState
+                    || agvStateItemI.isLeftLaserNearInducedState
+                    || agvStateItemI.isRightLaserNearInducedState){
+                AgvItemcarList[i].color="#6f37a6";
+            }if(agvStateItemI.ActionItem.CurrentDestpoint!=0){
+                 AgvItemcarList[i].color="#e5bb64";
+            }if((agvStateItemI.currentErrorCodeState!="0" || !agvStateItemI.isOnline)
+                    && agvStateItemI.FinishInit){
+                AgvItemcarList[i].color="#a11715";
             }
-
             mapPoint mapPoint0=currentMapPoint.value(agvStateItemI.passPointState.toDouble());
             if(mapPoint0.cardPoint>0.00){
-                AgvItemcarList[i]->angle=int(mapPoint0.angle);
-                if(mapPoint0.angle==0.00){
-                    AgvItemcarList[i]->move(int(mapPoint0.movex-30),int(mapPoint0.movey-155));
-                }else {
-                    AgvItemcarList[i]->move(int(mapPoint0.movex-20),int(mapPoint0.movey-160));
-                }
+                AgvItemcarList[i].angle=int(mapPoint0.angle);
+                AgvItemcarList[i].stationX=int(mapPoint0.movex);
+                AgvItemcarList[i].stationY=int(mapPoint0.movey);
+                m_Image->setAgvItemcarList_date(AgvItemcarList[i]);
+                m_Image_2->setAgvItemcarList_date(AgvItemcarList[i]);
                 //qDebug()<<" passPointState:"<<agvStateItemI.passPointState<<" angle:"<<mapPoint0.angle<<" movex:"<<mapPoint0.movex<<" movey:"<<mapPoint0.movey;
             }
-
         }
     }
-
+    boolagvState=true;                            //槽函数 保护机制
 }
 
 void monitoring::mouseMoveEvent(QMouseEvent *e)
@@ -227,13 +203,14 @@ void monitoring::mouseMoveEvent(QMouseEvent *e)
 
 void monitoring::mouseDoubleClickEvent(QMouseEvent *e)
 {
+    int floor=2;
     if(e->button() == Qt::LeftButton)
     {
         PointInputI->setVisible(false);
     }if(e->button() == Qt::RightButton){
         mousePoint.setX(e->x());mousePoint.setY(e->y());
         PointInputI->move(e->x(),e->y());
-        PointInputI->setPoint(mousePoint);
+        PointInputI->setPoint(mousePoint,floor);
         PointInputI->setVisible(false);PointInputI->setVisible(true);
     }
 }

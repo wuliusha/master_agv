@@ -2,7 +2,8 @@
 #define DEVICEMANAGE_H
 
 #include <QWidget>
-#include "deviceitem.h"
+#include <QObject>
+#include "stationitem.h"
 #include "array_single.h"
 #include "taskmanager/ess_single.h"
 #include "queryServer/thread/threadinsert.h"
@@ -25,30 +26,21 @@ public:
     explicit DeviceManage(QWidget *parent = nullptr);
     ~DeviceManage();
     QTimer *DeviceTimer;
-    LiftTask LiftTaskI;              //当前电梯任务状态
+    stationItem *stationItemI;
 
     ServerInit ServerInitItem;      //基础信息
     ServerItem CurrentServerItem;   //需要实时更信息 链表表 整合
 
-    QMap<QString,DeviceItem*>DeviceItemMap_S;//站点接驳台
-    QMap<QString,DeviceItem*>DeviceItemMap_D;//自动门控制
-
     void DeviceManageInit();
-
-    void newDeviceItem_S();       //创建 新的站点接驳台 Item
-
-    void newDeviceItem_D();       //创建 新的设备 Item
-
-    void setLiftTaskInfo();       //创建 电梯 Item
-
-    void setLayout_show(QWidget *LayoutWidget,QWidget *LayoutWidget_,QString deviceType,QMap<QString,DeviceItem*>DeviceItemMap);        //设置初始化布局
-
-    void UPLayout_show(QMap<QString,DeviceItem*>DeviceItemMap,int page);        //更新显示
 
     void TableWidget_show();                                        //显示当前电梯各个接驳台任务状态线信息
     QList<RW_Excel>TableWidget(QMap<QString,LiftCode>LiftCodeMap);  //显示当前电梯各个接驳台任务状态线信息
 
+    void setActionbtns(QString deviceType, int Action,QString Type,QString deviceDesc);
 
+    bool LiftCodeStatus_clear(LiftCode LiftCodeItem);
+
+    bool setLiftCodeMap_Status(QMap<QString,LiftCode>LiftCodeMap);                  //更新接升降机状态信息
 
 public slots:
 
@@ -58,25 +50,11 @@ signals:
     //实时更新升降机状态信息  plc
     void sig_LiftTaskStatus(LiftTask LiftTaskI);
 
-    //更新各设备状态信息  控制盒-接驳台类型
-    void sigDeviceStatus_station(QString DeviceIP,int online,int DeviceStatus,controlbox controlboxI);
-
-    //更新各设备状态信息  控制盒-自动门类型
-    void sigDeviceStatus_door(QString DeviceIP,int online,int DeviceStatus,controlbox controlboxI);
-
-    //更新各设备状态信息  控制盒-电梯类型
-    void sigDeviceStatus_Lift(QString DeviceIP,int online,int DeviceStatus,controlbox controlboxI);
-
-    //更新各设备状态信息  控制盒-充电桩类型
-    void sigDeviceStatus_charge(QString DeviceIP,int online,int DeviceStatus,controlbox controlboxI);
+    void sig_LiftCodeStatus_clear(LiftCode LiftCodeItem);
 
 public slots:
 
-    void ON_Pressed();
-
-    void ON_Released();
-
-    void ON_ClickProcess();
+    void SlotsetCurrentItem(int row, int column);
 
     //设备动作指令——————> DeviceIP：设备IP     deviceType：设备类型   orderType：动作指令   Action：动作标识
     void ON_DeviceStatusAction(QString DeviceIP,QString deviceType, QString orderType, int Action);
@@ -84,32 +62,29 @@ public slots:
     //获取升降机的动作及查询指令---单个
     void ON_setLiftactionArray(LiftTask LiftTaskI,int startFloor,int destFloor);
 
-
     void ON_LiftStatuschage(QString DeviceIP,QByteArray ActionArray);           //实时检测 升降机状态信息
 
-    void ON_DeviceStatuschage(QString DeviceIP,QByteArray ActionArray);         //实时检测 设备状态信息
 
+    void ON_LiftCodeMap(QMap<QString,LiftCode>LiftCodeMap_);            //更新升降机各个接驳台状态信息
 
 private slots:
 
     void on_Sure_Button_Lift_clicked();
 
-    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_clearButton_clicked();
 
 private:
     Ui::DeviceManage *ui;
+    LiftTask LiftTaskI;              //当前电梯任务状态
+    QMap<QString,QString>LiftCodedesc;
     QList<QPushButton *>Actionbtns;
 
-    Udp_Device *Udp_DeviceI;
-    QThread *threadUdpItem;
-
-    TcpServer *TcpServerI;
-    QThread *threadTcpServertem;
+    int LiftCodeMapconut=0;
+    LiftCode slectLiftCode;
+    QMap<QString,LiftCode>LiftCodeMap;
 
     TcpClient *TcpClientI;
     QThread *threadTcpClientItem;
-
-
 
 };
 

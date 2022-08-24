@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>systemManage</class>
+ <widget class="QWidget" name="systemManage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1163</width>
+    <height>514</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(73, 67, 103);</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>300</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Adobe Devanagari</family>
+       <pointsize>15</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTabWidget::pane{
+	border-width:5px;
+	border-color:rgb(48, 104, 151);
+	border-style: outset;
+	background-color: rgb(132, 171, 208);
+	background: transparent;
+} 
+
+QTabBar::tab{
+	border-color:rgb(48, 104, 151);
+	border-bottom-color: #00aa7f;
+	max-width:30ex;
+    min-width:30ex; 
+	min-height:15px;
+	font:18px Times New Roman;
+	padding: 0px;
+	background-color: rgb(241, 242, 229);
+
+}
+QTabBar::tab:hover{
+	background:rgb(198, 197, 146);
+    color:black;
+}
+QTabBar::tab:selected{
+	border-color: black;
+	background:green;
+	color:white;
+}
+
+QTabWidget::tab-bar {
+	border-top: 2px solid #E5E5E5;
+	border-bottom: 2px solid #E5E5E5;
+	border-left:1px solid #E5E5E5;
+	alignment: left;
+	font-size: 14px;
+	background-color:#FFFFFF;
+
+}</string>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

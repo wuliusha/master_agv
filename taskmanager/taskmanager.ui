@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1682</width>
-    <height>740</height>
+    <width>2049</width>
+    <height>755</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>120</height>
+    <height>80</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -47,24 +47,10 @@
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(134, 120, 146);
-background-color: rgb(111, 109, 133);
-background-color: rgb(148, 214, 218);
+            <string notr="true">background-color: rgb(255, 119, 15);
 </string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
-            <property name="leftMargin">
-             <number>10</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>10</number>
-            </property>
-            <property name="bottomMargin">
-             <number>10</number>
-            </property>
             <item row="0" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="3,5,1,1">
               <property name="spacing">
@@ -104,7 +90,7 @@ background-color: rgb(148, 214, 218);
                          <string notr="true">color:#ffffff</string>
                         </property>
                         <property name="text">
-                         <string>产品编码</string>
+                         <string>工单编码</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
@@ -112,7 +98,7 @@ background-color: rgb(148, 214, 218);
                        </widget>
                       </item>
                       <item>
-                       <widget class="QTextEdit" name="GetMaterial2">
+                       <widget class="QTextEdit" name="LabelNolineEdit">
                         <property name="maximumSize">
                          <size>
                           <width>16777215</width>
@@ -133,7 +119,7 @@ color: rgb(33, 33, 33);</string>
                      </layout>
                     </item>
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_16" stretch="1,1">
+                     <layout class="QVBoxLayout" name="verticalLayout_16" stretch="1,0">
                       <property name="spacing">
                        <number>1</number>
                       </property>
@@ -148,7 +134,7 @@ color: rgb(33, 33, 33);</string>
                          <string notr="true">color:#ffffff</string>
                         </property>
                         <property name="text">
-                         <string>编码胶箱</string>
+                         <string>胶箱编码</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
@@ -156,17 +142,11 @@ color: rgb(33, 33, 33);</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLineEdit" name="GetorderId">
-                        <property name="sizePolicy">
-                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                         </sizepolicy>
-                        </property>
+                       <widget class="QTextEdit" name="GetorderId">
                         <property name="maximumSize">
                          <size>
                           <width>16777215</width>
-                          <height>33</height>
+                          <height>35</height>
                          </size>
                         </property>
                         <property name="font">
@@ -410,8 +390,6 @@ color: rgb(33, 33, 33);</string>
                     </property>
                     <property name="styleSheet">
                      <string notr="true">color:#ffffff;
-background-color: rgb(148, 214, 218);
-background-color: rgb(80, 138, 136);
 QComboBox::drop-down {
     subcontrol-position: top right;
     width: 30px;
@@ -440,6 +418,11 @@ QComboBox::drop-down {
                     <item>
                      <property name="text">
                       <string>移库任务</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>返空料框</string>
                      </property>
                     </item>
                    </widget>
@@ -492,8 +475,6 @@ QComboBox::drop-down {
                     </property>
                     <property name="styleSheet">
                      <string notr="true">color:#ffffff;
-background-color: rgb(148, 214, 218);
-background-color: rgb(80, 138, 136);
 QComboBox::drop-down {
     subcontrol-position: top right;
     width: 30px;
@@ -511,27 +492,17 @@ QComboBox::drop-down {
                     </item>
                     <item>
                      <property name="text">
-                      <string>已完成任务</string>
+                      <string>等待执行</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>放箱中任务</string>
+                      <string>正在运输</string>
                      </property>
                     </item>
                     <item>
                      <property name="text">
-                      <string>取箱中任务</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>运输中任务</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>待分配任务</string>
+                      <string>已完成</string>
                      </property>
                     </item>
                    </widget>
@@ -724,20 +695,39 @@ border-left-color: gray;  //左边框线颜色
                </spacer>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1">
+               <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,1">
                 <property name="spacing">
                  <number>5</number>
                 </property>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_19">
-                  <item>
-                   <widget class="QLabel" name="label_2">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QLineEdit" name="lineEdit_count">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>5000</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>16</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:#ffffff</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="1,1">
@@ -754,30 +744,57 @@ border-left-color: gray;  //左边框线颜色
                     </property>
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
-                      <height>0</height>
+                      <width>120</width>
+                      <height>35</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
                       <width>16777215</width>
-                      <height>40</height>
+                      <height>45</height>
                      </size>
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>20</pointsize>
+                      <pointsize>16</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">color: white;
-color:#ffffff;
-border-radius:15px;
-border-style: outset;
-border: 2px groove gray; 
-background-color: rgb(0, 166, 172);</string>
+                     <string notr="true">QPushButton {
+	background-color: rgb(0, 166, 172); /* 背景颜色 */ 
+	border: 2px groove #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius: 5px; /* 边框圆角 */
+	border-style: outset;/*边框凸起显示*/
+	color: #ffffff; /* 文本颜色 */
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+}
+ 
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}
+</string>
                     </property>
                     <property name="text">
                      <string>查询</string>
@@ -794,33 +811,60 @@ background-color: rgb(0, 166, 172);</string>
                     </property>
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
-                      <height>0</height>
+                      <width>120</width>
+                      <height>35</height>
                      </size>
                     </property>
                     <property name="maximumSize">
                      <size>
                       <width>16777215</width>
-                      <height>40</height>
+                      <height>45</height>
                      </size>
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>20</pointsize>
+                      <pointsize>16</pointsize>
                       <weight>75</weight>
                       <bold>true</bold>
                      </font>
                     </property>
                     <property name="styleSheet">
-                     <string notr="true">color: white;
-color:#ffffff;
-border-radius:15px;
-border-style: outset;
-border: 2px groove gray; 
-background-color: rgb(0, 166, 172);</string>
+                     <string notr="true">QPushButton {
+	background-color: rgb(0, 166, 172); /* 背景颜色 */ 
+	border: 2px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius: 5px; /* 边框圆角 */
+	border-style: outset;/*边框凸起显示*/
+	color: #ffffff; /* 文本颜色 */
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+}
+ 
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}
+</string>
                     </property>
                     <property name="text">
-                     <string>取消</string>
+                     <string>刷新</string>
                     </property>
                    </widget>
                   </item>
@@ -905,7 +949,7 @@ background-color: rgb(0, 166, 172);</string>
              </column>
              <column>
               <property name="text">
-               <string>产品编码</string>
+               <string>工单编码</string>
               </property>
              </column>
              <column>
@@ -950,20 +994,18 @@ background-color: rgb(0, 166, 172);</string>
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>120</height>
+               <height>160</height>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(114, 119, 123);</string>
+              <string notr="true">background-color: rgb(114, 119, 123);
+</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_5">
+             <layout class="QGridLayout" name="gridLayout_6">
               <item row="0" column="0">
-               <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1">
-                <property name="spacing">
-                 <number>10</number>
-                </property>
+               <layout class="QVBoxLayout" name="verticalLayout">
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="10,1">
+                 <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="10,1">
                   <property name="spacing">
                    <number>10</number>
                   </property>
@@ -984,220 +1026,22 @@ background-color: rgb(0, 166, 172);</string>
                     <property name="maximumSize">
                      <size>
                       <width>16777215</width>
-                      <height>35</height>
+                      <height>30</height>
                      </size>
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>14</pointsize>
+                      <pointsize>12</pointsize>
                       <weight>50</weight>
                       <bold>false</bold>
                      </font>
                     </property>
                     <property name="styleSheet">
                      <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(33, 33, 33);</string>
+color: rgb(33, 33, 33);
+border-radius:15px</string>
                     </property>
                    </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="lineEdit_count">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>30</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>120</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>16</pointsize>
-                     </font>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">color:#ffffff;
-border-radius:15px;
-border-style: outset;
-border: 2px groove gray; </string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,5,1">
-                  <property name="spacing">
-                   <number>15</number>
-                  </property>
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,2">
-                    <property name="spacing">
-                     <number>30</number>
-                    </property>
-                    <item>
-                     <widget class="QComboBox" name="taskStatusBox_ESS">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>260</width>
-                        <height>35</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>45</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>18</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">color:#ffffff;
-background-color: rgb(124, 133, 119);
-QComboBox::drop-down {
-    subcontrol-position: top right;
-    width: 30px;
-    border-left-width: 1px;
-    border-left-style: solid; 
-	border-left-color: gray;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-}</string>
-                      </property>
-                      <item>
-                       <property name="text">
-                        <string>ESS任务指令</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>STATION-01_入场</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>STATION-03_离场</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>STATION-04_离场</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>入库完成</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>取消ESS任务</string>
-                       </property>
-                      </item>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QComboBox" name="taskStatusBox_AGV">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>260</width>
-                        <height>35</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>45</height>
-                       </size>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>18</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true">color:#ffffff;
-background-color: rgb(157, 144, 135);
-QComboBox::drop-down {
-    subcontrol-position: top right;
-    width: 30px;
-    border-left-width: 1px;
-    border-left-style: solid; 
-	border-left-color: gray;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-}</string>
-                      </property>
-                      <item>
-                       <property name="text">
-                        <string>AGV运输指令</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>执行起始楼层任务</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>执行目标楼层任务</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>-------------------</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>-------------------</string>
-                       </property>
-                      </item>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
@@ -1256,8 +1100,8 @@ QCheckBox::indicator:checked {
                       </property>
                       <property name="minimumSize">
                        <size>
-                        <width>120</width>
-                        <height>45</height>
+                        <width>160</width>
+                        <height>35</height>
                        </size>
                       </property>
                       <property name="maximumSize">
@@ -1274,18 +1118,591 @@ QCheckBox::indicator:checked {
                        </font>
                       </property>
                       <property name="styleSheet">
-                       <string notr="true">color: white;
-color:#ffffff;
-border-radius:15px;
-border-style: outset;
-border: 2px groove gray; </string>
+                       <string notr="true">QPushButton {
+	background-color: #00a6ac; /* 背景颜色 */ 
+	border: 2px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius: 10px; /* 边框圆角 */
+	border-style: outset;/*边框凸起显示*/
+	color: #b12b2b; /* 文本颜色 */
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+}
+ 
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}
+</string>
                       </property>
                       <property name="text">
-                       <string>删除</string>
+                       <string>异常删除</string>
                       </property>
                      </widget>
                     </item>
                    </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,1,1,10">
+                  <property name="spacing">
+                   <number>20</number>
+                  </property>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_82" stretch="1,10">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="Tolll_9">
+                      <property name="minimumSize">
+                       <size>
+                        <width>110</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color:#ffffff;</string>
+                      </property>
+                      <property name="text">
+                       <string>夹抱库位:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="shelfBindesc_e">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>220</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>35</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color: rgb(45, 45, 45);
+background-color: rgb(255, 255, 255);</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_83" stretch="1,10">
+                    <item>
+                     <widget class="QLabel" name="Tolll_10">
+                      <property name="minimumSize">
+                       <size>
+                        <width>110</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color:#ffffff;</string>
+                      </property>
+                      <property name="text">
+                       <string>本地库位:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="shelfBindesc">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>200</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>35</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color: rgb(45, 45, 45);
+background-color: rgb(255, 255, 255);</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_86" stretch="1,10">
+                    <property name="spacing">
+                     <number>3</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_48">
+                      <property name="minimumSize">
+                       <size>
+                        <width>110</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color:#ffffff;</string>
+                      </property>
+                      <property name="text">
+                       <string>胶箱编码:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLineEdit" name="containerCode">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>200</width>
+                        <height>30</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>35</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>14</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">color: rgb(45, 45, 45);
+background-color: rgb(255, 255, 255);</string>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="placeholderText">
+                       <string/>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="bundleBox">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>200</width>
+                      <height>35</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>18</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">color:#000000;
+background-color: rgb(0, 166, 172);
+QComboBox::drop-down {
+    subcontrol-position: top right;
+    width: 30px;
+    border-left-width: 1px;
+    border-left-style: solid; 
+	border-left-color: gray;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}</string>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string>STATION-01</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>STATION-02</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>STATION-03</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>STATION-04</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_3">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="10,1">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <spacer name="horizontalSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QWidget" name="widget_3" native="true">
+                    <property name="styleSheet">
+                     <string notr="true">background-color: rgb(141, 131, 130);
+border-radius:15px</string>
+                    </property>
+                    <layout class="QGridLayout" name="gridLayout_5">
+                     <property name="leftMargin">
+                      <number>5</number>
+                     </property>
+                     <property name="topMargin">
+                      <number>5</number>
+                     </property>
+                     <property name="rightMargin">
+                      <number>5</number>
+                     </property>
+                     <property name="bottomMargin">
+                      <number>5</number>
+                     </property>
+                     <item row="0" column="0">
+                      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1">
+                       <property name="spacing">
+                        <number>15</number>
+                       </property>
+                       <item>
+                        <widget class="QPushButton" name="rebundle">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>200</width>
+                           <height>35</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>220</width>
+                           <height>45</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <pointsize>20</pointsize>
+                           <weight>75</weight>
+                           <bold>true</bold>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;入库时: 当容器到位后，机器人不去取货时可先解绑，再重新绑定.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">
+QPushButton {
+	border: 1px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius:15px;border:none; /* 边框圆角 */
+	background-color: #00a6ac; /* 背景颜色 */
+	color: white;  
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+	border-image: url(:/image/close2.png);
+}
+
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>绑定码头</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="unbundle">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>200</width>
+                           <height>35</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>220</width>
+                           <height>45</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <pointsize>20</pointsize>
+                           <weight>75</weight>
+                           <bold>true</bold>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当容器到位后，机器人不去取货时可先解绑，再重新绑定&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">
+QPushButton {
+	border: 1px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius:15px;border:none; /* 边框圆角 */
+	background-color: #00a6ac; /* 背景颜色 */
+	color: white;  
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+	border-image: url(:/image/close2.png);
+}
+
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>解绑码头</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="unbundle_ess">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="minimumSize">
+                          <size>
+                           <width>220</width>
+                           <height>35</height>
+                          </size>
+                         </property>
+                         <property name="maximumSize">
+                          <size>
+                           <width>220</width>
+                           <height>45</height>
+                          </size>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <pointsize>20</pointsize>
+                           <weight>75</weight>
+                           <bold>true</bold>
+                          </font>
+                         </property>
+                         <property name="toolTip">
+                          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当容器到位后，机器人不去取货时可先解绑，再重新绑定&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">
+QPushButton {
+	border: 1px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius:15px;border:none; /* 边框圆角 */
+	background-color: #00a6ac; /* 背景颜色 */
+	color: white;  
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+	border-image: url(:/image/close2.png);
+}
+
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}</string>
+                         </property>
+                         <property name="text">
+                          <string>解绑夹抱库位</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
                   </item>
                  </layout>
                 </item>

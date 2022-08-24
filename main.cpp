@@ -115,15 +115,14 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
         stream << " " << msg  << " "  << functionName << " " << "[" << filePath << " "
                << QString::number(context.line)/*.leftJustified(5,space)*/ << "]" << "\r\n";
 
-
         QString logmsg="["+QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss:zzz")+"] "
                 +msg +" "  + functionName + " [" +filePath +" "
                      + QString::number(context.line) +"] \r\n" ;
 
-        log_single::GetInstance()->setqDebug_log(logmsg);
-
         file.flush();
         file.close();
+
+        log_single::GetInstance()->setqDebug_log(logmsg);
     }
     if(type == QtCriticalMsg || type == QtFatalMsg)
     {
@@ -138,7 +137,7 @@ int main(int argc, char *argv[])
 //    CfgSetting::getInstance();
     confSetting();
     qInstallMessageHandler(myMessageOutput);
-    QtSingleApplication a(QLatin1String("AGV_WWYL"), argc, argv);
+    QtSingleApplication a(QLatin1String("AGV_Master"), argc, argv);
     if (a.isRunning())
     {
         a.sendMessage("raise_window_noop");

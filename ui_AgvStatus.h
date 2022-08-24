@@ -11,9 +11,9 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QTableWidget>
-#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -21,20 +21,19 @@ QT_BEGIN_NAMESPACE
 class Ui_AgvStatus
 {
 public:
-    QVBoxLayout *verticalLayout;
+    QGridLayout *gridLayout;
     QTableWidget *agvShow;
 
     void setupUi(QWidget *AgvStatus)
     {
         if (AgvStatus->objectName().isEmpty())
             AgvStatus->setObjectName(QString::fromUtf8("AgvStatus"));
-        AgvStatus->resize(1674, 523);
-        verticalLayout = new QVBoxLayout(AgvStatus);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        verticalLayout->setContentsMargins(-1, -1, -1, 0);
+        AgvStatus->resize(1416, 526);
+        gridLayout = new QGridLayout(AgvStatus);
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         agvShow = new QTableWidget(AgvStatus);
-        if (agvShow->columnCount() < 14)
-            agvShow->setColumnCount(14);
+        if (agvShow->columnCount() < 15)
+            agvShow->setColumnCount(15);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
         agvShow->setHorizontalHeaderItem(0, __qtablewidgetitem);
         QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
@@ -63,6 +62,8 @@ public:
         agvShow->setHorizontalHeaderItem(12, __qtablewidgetitem12);
         QTableWidgetItem *__qtablewidgetitem13 = new QTableWidgetItem();
         agvShow->setHorizontalHeaderItem(13, __qtablewidgetitem13);
+        QTableWidgetItem *__qtablewidgetitem14 = new QTableWidgetItem();
+        agvShow->setHorizontalHeaderItem(14, __qtablewidgetitem14);
         if (agvShow->rowCount() < 10)
             agvShow->setRowCount(10);
         agvShow->setObjectName(QString::fromUtf8("agvShow"));
@@ -115,7 +116,7 @@ public:
         agvShow->setGridStyle(Qt::DashLine);
         agvShow->setCornerButtonEnabled(false);
         agvShow->setRowCount(10);
-        agvShow->setColumnCount(14);
+        agvShow->setColumnCount(15);
         agvShow->horizontalHeader()->setCascadingSectionResizes(true);
         agvShow->horizontalHeader()->setMinimumSectionSize(50);
         agvShow->horizontalHeader()->setDefaultSectionSize(92);
@@ -125,7 +126,7 @@ public:
         agvShow->verticalHeader()->setDefaultSectionSize(40);
         agvShow->verticalHeader()->setHighlightSections(true);
 
-        verticalLayout->addWidget(agvShow);
+        gridLayout->addWidget(agvShow, 0, 0, 1, 1);
 
 
         retranslateUi(AgvStatus);
@@ -164,6 +165,8 @@ public:
         ___qtablewidgetitem12->setText(QApplication::translate("AgvStatus", "          \345\270\247\347\274\226\347\240\201         ", nullptr));
         QTableWidgetItem *___qtablewidgetitem13 = agvShow->horizontalHeaderItem(13);
         ___qtablewidgetitem13->setText(QApplication::translate("AgvStatus", "\347\212\266\346\200\201", nullptr));
+        QTableWidgetItem *___qtablewidgetitem14 = agvShow->horizontalHeaderItem(14);
+        ___qtablewidgetitem14->setText(QApplication::translate("AgvStatus", "\346\214\207\344\273\244\347\212\266\346\200\201", nullptr));
     } // retranslateUi
 
 };

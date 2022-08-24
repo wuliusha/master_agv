@@ -2,6 +2,10 @@
 #define AGVSTATUS_H
 
 #include <QWidget>
+#include "agvcarpool.h"
+#include <QTimer>
+#include <QColor>
+#include <QTableWidgetItem>
 
 class QTimer;
 namespace Ui {
@@ -44,18 +48,26 @@ class AgvStatus : public QWidget
 {
     Q_OBJECT
 
+    /************** 基础信息链表 ***********/
+    QMap<int,QString >moveTaskStateMap;                 //返回指令接收状态
+
+
 public:
     explicit AgvStatus(QWidget *parent = nullptr);
     ~AgvStatus();
     QString getErrorCodeText(ERROR_CODE code);
     QString getWarningCodeText(int code);
     void closeEvent(QCloseEvent *);
+
 private slots:
     void timerTimeOut();
+
 private:
     Ui::AgvStatus *ui;
     QTimer *timer;
     int autoOpenCount;
+
+
 };
 
 #endif // AGVSTATUS_H

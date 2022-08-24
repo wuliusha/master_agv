@@ -15,9 +15,11 @@ button_single *button_single::GetInstance()
     else
     {
         mutex.lock();
-        button_singleItiem=new button_single;
-        return button_singleItiem;
+        if(button_singleItiem == nullptr){
+            button_singleItiem=new button_single;
+        }
         mutex.unlock();
+        return button_singleItiem;
     }
 }
 

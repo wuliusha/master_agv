@@ -5,14 +5,16 @@
 #include<QThread>
 
 #include "login/login.h"
+#include "agvCar/agvcarpool.h"
+#include "record/dailyrecord.h"
+#include "system/systemserver.h"
 #include "ManagerInfo/managerinfo.h"
 
-#include "agvCar/agvcarpool.h"
-#include "Device/deviceserver.h"
-#include "MainDesktop/desktopserver.h"
-#include "queryServer/thread/threadserver.h"
+#include "Device/managerserver.h"
+#include "MainDesktop/maindesktop.h"
 #include "taskmanager/taskmanagerserver.h"
-#include "StoreInfo/storeinfoserver.h"
+#include "queryServer/thread/threadserver.h"
+
 
 
 QT_BEGIN_NAMESPACE
@@ -26,8 +28,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void WidgetInit();//控件初始化
-    void NewClassItiem();//初始化新建对象
+    void WidgetInit(bool Visible);     //控件初始化
+    void NewClassItiem();               //初始化新建对象
     void CreateConnect();
 
 public slots:
@@ -35,35 +37,37 @@ public slots:
 
 private slots:
 
-    void on_System_Button_clicked();//系统
+    void on_lab_Ico_clicked();
 
-    void on_Desktop_Button_clicked();
+    void on_btn_System_clicked();
 
-    void on_OutStore_Button_clicked();
+    void on_btn_Device_clicked();
 
-    void on_StoreInfo_Button_clicked();
+    void on_btn_Edite_clicked();
 
-    void on_logInfo_Button_clicked();
+    void on_btn_log_clicked();
+
+    void ON_Pressed();
+
+    void ON_Released();
 
 private:
     Ui::MainWindow *ui;
-    helperInfo helperInfoItem;
 
-    Login *loginItiem;                      //登录
-    ManagerInfo *ManagerInfoItiem;          //日志
+    Login *loginItiem;                     //登录
+    ManagerInfo *ManagerInfoItem;          //菜单管理
+    dailyRecord *dailyRecordItem;          //日志
 
     threadServer *threadServerI;
     QThread *threadServerItem;
 
-    desktopServer *desktopServerI;          //主页
-    QThread *threaddesktopServer;
+    MainDesktop *MainDesktopItem;           //主页
 
-    storeInfoServer *storeInfoServerI;      //库存管理
-    QThread *threadstoreInfoServer;
-
-    deviceServer *deviceServerI;            //设备管理
+    managerServer *managerServerI;            //设备管理
     QThread *threaddeviceServer;
 
+    systemServer *systemServerI;            //系统管理
+    QThread *threadsystemServer;
 
     taskManagerServer *taskManagerServerI;  //任务管理
     QThread *threadtaskManagerServer;
@@ -71,6 +75,7 @@ private:
     agvCarPool *agvCarPool1;
     QThread *ThreadagvCarPool;
 
+    QList<QPushButton *>Actionbtns;
 
 };
 #endif // MAINWINDOW_H

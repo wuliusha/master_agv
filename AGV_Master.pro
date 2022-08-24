@@ -36,6 +36,8 @@ FORMS += \
 
 
 include(login/login.pri)
+include(record/record.pri)
+include(system/system.pri)
 include(Device/device.pri)
 include(MainDesktop/MainDesktop.pri)
 include(managerinfo/managerinfo.pri)

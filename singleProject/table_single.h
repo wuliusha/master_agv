@@ -39,9 +39,13 @@ public:
 
 
 public:
-
-
-
+    struct corlor_
+    {
+        int corlor=255;
+        int corlor1=255;
+        int corlor2=255;
+    };
+    QMap<int,corlor_>corlor_Map;
 };
 
 #endif // TABLE_SINGLE_H

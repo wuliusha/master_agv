@@ -5,6 +5,17 @@ QMutex table_single::mutex;
 
 table_single::table_single(QObject *parent)
 {
+    corlor_ corlor_I;
+    corlor_I.corlor=255;corlor_I.corlor1=255;corlor_I.corlor2=255;  //白色正常显示颜色   0
+    corlor_Map.insert(0,corlor_I);
+    corlor_I.corlor=29;corlor_I.corlor1=149;corlor_I.corlor2=63;    //绿色选中显示颜色   1
+    corlor_Map.insert(1,corlor_I);
+    corlor_I.corlor=151;corlor_I.corlor1=170;corlor_I.corlor2=166;  //橙黄色待执行任务显示颜色  2
+    corlor_Map.insert(2,corlor_I);
+    corlor_I.corlor=118;corlor_I.corlor1=77;corlor_I.corlor2=57;    //棕色正在执行任务显示颜色  3
+    corlor_Map.insert(3,corlor_I);
+    corlor_I.corlor=161;corlor_I.corlor1=23;corlor_I.corlor2=21;    //红色异常任务显示颜色      4
+    corlor_Map.insert(4,corlor_I);
 
 }
 
@@ -14,9 +25,11 @@ table_single *table_single::GetInstance()
         return table_singleItiem;
     }else{
         mutex.lock();
-        table_singleItiem=new table_single;
-        return table_singleItiem;
+        if(table_singleItiem == nullptr){
+            table_singleItiem=new table_single;
+        }
         mutex.unlock();
+        return table_singleItiem;
     }
 }
 
@@ -27,6 +40,9 @@ void table_single::TableWidgetInit(QTableWidget *table, int ftsize, QString Head
     table->verticalHeader()->setVisible(false);
     table->horizontalHeader()->setVisible(true);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);//列宽根据表格大小自适应
+    table->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);//设置水平进度条
+    table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);//设置竖直进度条
+
     //table->setStyleSheet("*{outline:0px;color:#FEFEFE;}");
     table->horizontalHeader()->setStyleSheet(HeaderStyle);
 
@@ -52,26 +68,18 @@ void table_single::TableWidgetInit(QTableWidget *table, int ftsize, QString Head
 
 void table_single::UP_TableWidget(QTableWidget *table, QList<RW_Excel> RW_ExcelList,QStringList comBoxlist,int combox)
 {
-
+    corlor_ corlor_I;
     table->clearContents();//清空表格中的内容（不包含表头）
     int rowcount=RW_ExcelList.size();
     table->setRowCount(rowcount); // 设置表格控件行数
-    //-1 红色(异常)  0 默认颜色  1 绿色（到达且已扫描）  2 黄色()  100 浅灰(完成)
-    int row=0,  color=161, color1=163, color2=166;
+    int row=0;
     foreach (RW_Excel RW_ExcelItiem, RW_ExcelList){
         if(RW_ExcelItiem.checked==1){RW_ExcelItiem.corlor=1;}
         if(RW_ExcelItiem.corlor==1){
             RW_ExcelItiem.fontclrlor=1;
-            color=29; color1=149; color2=63;
         }
-        if(RW_ExcelItiem.corlor==0){
-            //color=161; color1=163; color2=166;
-            //color=161; color1=163; color2=166;
-            //background-color: rgb(246, 245, 236);
-            color=255; color1=254; color2=249;
-            if(row%2==0){color=246; color1=245; color2=236;}
-        }
-        TableWidgetAnaly(table,row,color,color1,color2,RW_ExcelItiem,comBoxlist,combox);
+        corlor_I=corlor_Map.value(RW_ExcelItiem.corlor);
+        TableWidgetAnaly(table,row,corlor_I.corlor,corlor_I.corlor1,corlor_I.corlor2,RW_ExcelItiem,comBoxlist,combox);
         row++;
     }
     if(!table->isVisible()){

@@ -158,7 +158,7 @@ bool SqliteData::insertLmstationMap(QMap<QString, lmstation> lmstationMap)
                 return false;
             }
 
-            iter++;
+            ++iter;
         }
     }
     Singleton<ConnectionPool>::getInstance().releaseConnection(db);
@@ -364,9 +364,11 @@ bool SqliteData::setRobotIp(QString robotIP)
         query.addBindValue(robotIP);
         query.addBindValue(1);
         if(!query.exec()){
-              qDebug()<<"更新失败 robotInfo"<<QDateTime::currentDateTime();
+              qDebug()<<"更新失败 robotInfo"<<query.record()<<QDateTime::currentDateTime();
               Singleton<ConnectionPool>::getInstance().releaseConnection(db);
               return false;
+        }else{
+
         }
     }
     Singleton<ConnectionPool>::getInstance().releaseConnection(db);

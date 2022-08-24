@@ -40,8 +40,9 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QHBoxLayout *horizontalLayout;
     QComboBox *queryTypeBox;
-    QLineEdit *queryMaterial;
+    QLineEdit *queryLineEdit;
     QLineEdit *lineEdit_count;
+    QPushButton *pushButton;
     QSpacerItem *horizontalSpacer;
     QWidget *page_4;
     QGridLayout *gridLayout_4;
@@ -73,22 +74,25 @@ public:
         StoreInfo->setStyleSheet(QString::fromUtf8("color: rgb(33, 33, 33);"));
         gridLayout_6 = new QGridLayout(StoreInfo);
         gridLayout_6->setObjectName(QString::fromUtf8("gridLayout_6"));
-        gridLayout_6->setContentsMargins(0, -1, 0, -1);
+        gridLayout_6->setContentsMargins(0, 9, 0, 0);
         verticalLayout = new QVBoxLayout();
-        verticalLayout->setSpacing(10);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         widget_2 = new QWidget(StoreInfo);
         widget_2->setObjectName(QString::fromUtf8("widget_2"));
+        widget_2->setMaximumSize(QSize(16777215, 75));
         widget_2->setStyleSheet(QString::fromUtf8("color: white;\n"
-"background-color: rgb(148, 214, 218);"));
+"background-color: rgb(255, 119, 15);\n"
+""));
         gridLayout_5 = new QGridLayout(widget_2);
         gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
+        gridLayout_5->setContentsMargins(-1, 7, -1, 7);
         horizontalLayout_8 = new QHBoxLayout();
         horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
         horizontalLayout_8->setContentsMargins(-1, -1, 10, -1);
         stackedWidget_2 = new QStackedWidget(widget_2);
         stackedWidget_2->setObjectName(QString::fromUtf8("stackedWidget_2"));
         stackedWidget_2->setMaximumSize(QSize(16777215, 60));
+        stackedWidget_2->setStyleSheet(QString::fromUtf8(""));
         page_3 = new QWidget();
         page_3->setObjectName(QString::fromUtf8("page_3"));
         gridLayout_3 = new QGridLayout(page_3);
@@ -101,7 +105,6 @@ public:
         queryTypeBox = new QComboBox(page_3);
         queryTypeBox->addItem(QString());
         queryTypeBox->addItem(QString());
-        queryTypeBox->addItem(QString());
         queryTypeBox->setObjectName(QString::fromUtf8("queryTypeBox"));
         queryTypeBox->setMinimumSize(QSize(160, 37));
         queryTypeBox->setMaximumSize(QSize(160, 37));
@@ -111,7 +114,6 @@ public:
         font.setWeight(75);
         queryTypeBox->setFont(font);
         queryTypeBox->setStyleSheet(QString::fromUtf8("color:#ffffff;\n"
-"background-color: rgb(0, 166, 172);\n"
 "QComboBox::drop-down {\n"
 "    subcontrol-position: top right;\n"
 "    width: 30px;\n"
@@ -124,22 +126,22 @@ public:
 
         horizontalLayout->addWidget(queryTypeBox);
 
-        queryMaterial = new QLineEdit(page_3);
-        queryMaterial->setObjectName(QString::fromUtf8("queryMaterial"));
+        queryLineEdit = new QLineEdit(page_3);
+        queryLineEdit->setObjectName(QString::fromUtf8("queryLineEdit"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
-        sizePolicy.setHeightForWidth(queryMaterial->sizePolicy().hasHeightForWidth());
-        queryMaterial->setSizePolicy(sizePolicy);
+        sizePolicy.setHeightForWidth(queryLineEdit->sizePolicy().hasHeightForWidth());
+        queryLineEdit->setSizePolicy(sizePolicy);
         QFont font1;
         font1.setPointSize(20);
         font1.setBold(true);
         font1.setWeight(75);
-        queryMaterial->setFont(font1);
-        queryMaterial->setStyleSheet(QString::fromUtf8("color: rgb(45, 45, 45);\n"
+        queryLineEdit->setFont(font1);
+        queryLineEdit->setStyleSheet(QString::fromUtf8("color: rgb(45, 45, 45);\n"
 "background-color: rgb(255, 255, 255);"));
 
-        horizontalLayout->addWidget(queryMaterial);
+        horizontalLayout->addWidget(queryLineEdit);
 
 
         horizontalLayout_4->addLayout(horizontalLayout);
@@ -157,6 +159,51 @@ public:
         lineEdit_count->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 255);"));
 
         horizontalLayout_4->addWidget(lineEdit_count);
+
+        pushButton = new QPushButton(page_3);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+        pushButton->setEnabled(false);
+        sizePolicy1.setHeightForWidth(pushButton->sizePolicy().hasHeightForWidth());
+        pushButton->setSizePolicy(sizePolicy1);
+        pushButton->setMinimumSize(QSize(60, 30));
+        pushButton->setMaximumSize(QSize(60, 45));
+        pushButton->setFont(font);
+        pushButton->setStyleSheet(QString::fromUtf8("\n"
+"QPushButton {\n"
+"	border: 1px solid #298DFF; /* QPushButton\350\276\271\346\241\206\347\232\204\345\256\275\345\272\246\343\200\201\346\240\267\345\274\217\345\222\214\351\242\234\350\211\262 */\n"
+"	border-radius:15px;border:none; /* \350\276\271\346\241\206\345\234\206\350\247\222 */\n"
+"	background-color: #00a6ac; /* \350\203\214\346\231\257\351\242\234\350\211\262 */\n"
+"	color: white;  \n"
+"}\n"
+" \n"
+"QPushButton:hover {	/* \351\274\240\346\240\207\346\202\254\346\265\256\345\234\250QPushButton\344\270\212\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	background-color: #298DFF;\n"
+"	color: #F2F2F2;\n"
+"	border-image: url(:/image/close2.png);\n"
+"}\n"
+"\n"
+"QPushButton:checked { /* QPushButton\345\217\257\351\200\211\344\270\255\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	border: 1px solid #FF5242;\n"
+"	background-color: #F2F2F2;\n"
+"	color: #FF5242;\n"
+"}\n"
+" \n"
+"QPushButton:pressed { /* \351\274\240\346\240\207\346\214\211\345\216\213\345\234\250QPushButton\344\270\212\346\227"
+                        "\266\347\232\204\347\212\266\346\200\201 */\n"
+"	background-color: #55ff7f;\n"
+"}\n"
+" \n"
+"QPushButton:checked:pressed { /* QPushButton\345\244\204\344\272\216\345\217\257\351\200\211\344\270\255\344\270\224\351\274\240\346\240\207\346\214\211\345\216\213\345\234\250QPushButton\344\270\212\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	background-color: #F2F2F2;\n"
+"}\n"
+" \n"
+"QPushButton:disabled { /* QPushButton\347\246\201\347\224\250\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	border: 1px solid #CDCDCD;\n"
+"	background-color: #CDCDCD;\n"
+"	color: #B4B4B4;\n"
+"}"));
+
+        horizontalLayout_4->addWidget(pushButton);
 
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -237,12 +284,40 @@ public:
         font3.setBold(true);
         font3.setWeight(75);
         query_Button->setFont(font3);
-        query_Button->setStyleSheet(QString::fromUtf8("color: white;\n"
-"color:#ffffff;\n"
-"border-radius:15px;\n"
-"border-style: outset;\n"
-"border: 2px groove gray; \n"
-"background-color: rgb(0, 166, 172);"));
+        query_Button->setStyleSheet(QString::fromUtf8("\n"
+"QPushButton {\n"
+"	border: 1px solid #298DFF; /* QPushButton\350\276\271\346\241\206\347\232\204\345\256\275\345\272\246\343\200\201\346\240\267\345\274\217\345\222\214\351\242\234\350\211\262 */\n"
+"	border-radius:15px;border:none; /* \350\276\271\346\241\206\345\234\206\350\247\222 */\n"
+"	background-color: #00a6ac; /* \350\203\214\346\231\257\351\242\234\350\211\262 */\n"
+"	color: white;  \n"
+"}\n"
+" \n"
+"QPushButton:hover {	/* \351\274\240\346\240\207\346\202\254\346\265\256\345\234\250QPushButton\344\270\212\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	background-color: #298DFF;\n"
+"	color: #F2F2F2;\n"
+"	border-image: url(:/image/close2.png);\n"
+"}\n"
+"\n"
+"QPushButton:checked { /* QPushButton\345\217\257\351\200\211\344\270\255\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	border: 1px solid #FF5242;\n"
+"	background-color: #F2F2F2;\n"
+"	color: #FF5242;\n"
+"}\n"
+" \n"
+"QPushButton:pressed { /* \351\274\240\346\240\207\346\214\211\345\216\213\345\234\250QPushButton\344\270\212\346\227"
+                        "\266\347\232\204\347\212\266\346\200\201 */\n"
+"	background-color: #55ff7f;\n"
+"}\n"
+" \n"
+"QPushButton:checked:pressed { /* QPushButton\345\244\204\344\272\216\345\217\257\351\200\211\344\270\255\344\270\224\351\274\240\346\240\207\346\214\211\345\216\213\345\234\250QPushButton\344\270\212\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	background-color: #F2F2F2;\n"
+"}\n"
+" \n"
+"QPushButton:disabled { /* QPushButton\347\246\201\347\224\250\346\227\266\347\232\204\347\212\266\346\200\201 */\n"
+"	border: 1px solid #CDCDCD;\n"
+"	background-color: #CDCDCD;\n"
+"	color: #B4B4B4;\n"
+"}"));
 
         horizontalLayout_3->addWidget(query_Button);
 
@@ -298,7 +373,7 @@ public:
         horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
         stackedWidget_3 = new QStackedWidget(page_2);
         stackedWidget_3->setObjectName(QString::fromUtf8("stackedWidget_3"));
-        stackedWidget_3->setStyleSheet(QString::fromUtf8("background-color: rgb(189, 189, 186);"));
+        stackedWidget_3->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 119, 15);"));
         page_5 = new QWidget();
         page_5->setObjectName(QString::fromUtf8("page_5"));
         stackedWidget_3->addWidget(page_5);
@@ -324,8 +399,6 @@ public:
 
         verticalLayout->addWidget(stackedWidget);
 
-        verticalLayout->setStretch(0, 1);
-        verticalLayout->setStretch(1, 10);
 
         gridLayout_6->addLayout(verticalLayout, 0, 0, 1, 1);
 
@@ -343,10 +416,10 @@ public:
     {
         StoreInfo->setWindowTitle(QApplication::translate("StoreInfo", "Form", nullptr));
         queryTypeBox->setItemText(0, QApplication::translate("StoreInfo", "\350\264\247\346\236\266\347\274\226\345\217\267", nullptr));
-        queryTypeBox->setItemText(1, QApplication::translate("StoreInfo", "\345\267\245\345\215\225\347\274\226\347\240\201", nullptr));
-        queryTypeBox->setItemText(2, QApplication::translate("StoreInfo", "\350\203\266\347\256\261\347\274\226\347\240\201", nullptr));
+        queryTypeBox->setItemText(1, QApplication::translate("StoreInfo", "\350\203\266\347\256\261\347\274\226\347\240\201", nullptr));
 
-        queryMaterial->setText(QApplication::translate("StoreInfo", "A01", nullptr));
+        queryLineEdit->setText(QApplication::translate("StoreInfo", "A01", nullptr));
+        pushButton->setText(QString());
         label_9->setText(QApplication::translate("StoreInfo", "\350\267\257\345\276\204:", nullptr));
         lead_Button->setText(QApplication::translate("StoreInfo", "\345\257\274\345\205\245\346\224\271\344\273\223EXcel", nullptr));
         query_Button->setText(QApplication::translate("StoreInfo", "\346\237\245\350\257\242", nullptr));

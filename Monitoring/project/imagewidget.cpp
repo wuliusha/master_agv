@@ -23,11 +23,23 @@ QRectF ImageWidget::boundingRect() const
                   m_pix.width(), m_pix.height());
 }
 
-void ImageWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *,
-                    QWidget *)
+void ImageWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *,QWidget *)
 {
-
     painter->drawPixmap(-m_pix.width() / 2, -m_pix.height() / 2, m_pix);
+    painter->setFont(QFont("Arial",12));
+    for(int i=0;i<AgvItemcarList.length();i++){
+        if(AgvItemcarList[i].floor==floor){
+            painter->setBrush(AgvItemcarList[i].color);
+            painter->setRenderHint(QPainter::Antialiasing);
+            if(AgvItemcarList[i].angle%180==0){
+                painter->drawRoundedRect(QRect(int(AgvItemcarList[i].stationX-15),int(AgvItemcarList[i].stationY-20), 40.0, 30.0), 16.0, 13.0);
+                painter->drawText(int(AgvItemcarList[i].stationX),int(AgvItemcarList[i].stationY),QString("%1").arg(AgvItemcarList[i].agvNum));
+            }else{
+                painter->drawRoundedRect(QRect(int(AgvItemcarList[i].stationX-15),int(AgvItemcarList[i].stationY-20), 30.0, 40.0), 13.0, 16.0);
+                painter->drawText(int(AgvItemcarList[i].stationX-10),int(AgvItemcarList[i].stationY+20),QString("%1").arg(AgvItemcarList[i].agvNum));
+            }
+        }
+    }
 }
 
 void ImageWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -74,13 +86,15 @@ void ImageWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton){
         left_Double=true;
-        //mousePoint = event->pos();//鼠标左击时，获取当前鼠标在图片中的坐标，
-        mousePoint=event->screenPos();//返回屏幕坐标中的鼠标光标位置
-        //mousePoint = mapToScene(event->pos());
-
-        //emit signalPoint(mousePoint,"left");//left right
+        mousePoint = event->pos();//鼠标左击时，获取当前鼠标在图片中的坐标，
+        for(int i=0;i<AgvItemcarList.length();i++){
+            AgvItemcarList[i].stationX=int(mousePoint.rx());
+            AgvItemcarList[i].stationY=int(mousePoint.ry());
+        }
+        qDebug()<<" mousePoint 1"<<mousePoint.rx()<<mousePoint.ry();
     }
     if(event->button() == Qt::RightButton){
+        right_Double=true;
         //emit signalPoint(mousePoint,"right");//left right
     }
 }
@@ -144,7 +158,17 @@ QPixmap ImageWidget::getQGraphicsViewWH()
 QPointF ImageWidget::getmousePoint()
 {
     left_Double=false;
+    right_Double=false;
     return mousePoint;
+}
+
+void ImageWidget::setAgvItemcarList_date(AgvItem AgvItemI)
+{
+    for(int i=0;i<AgvItemcarList.length();i++){
+        if(AgvItemcarList[i].agvip==AgvItemI.agvip){
+            AgvItemcarList[i]=AgvItemI;
+        }
+    }
 }
 
 void ImageWidget::ResetItemPos()//重置图片位置
@@ -163,7 +187,7 @@ void ImageWidget::SesetItemPos(qreal  scaleValue)
 {
     scaleValue_01=scaleValue;
     m_scaleValue*=scaleValue;     //每次缩小10%
-    setScale(m_scaleValue); //缩放到一开始的自适应大小
+    setScale(m_scaleValue);        //缩放到一开始的自适应大小
     setPos(0,0);
 }
 

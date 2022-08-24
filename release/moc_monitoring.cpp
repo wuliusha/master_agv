@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_monitoring_t {
-    QByteArrayData data[19];
-    char stringdata0[218];
+    QByteArrayData data[18];
+    char stringdata0[202];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -48,8 +48,7 @@ QT_MOC_LITERAL(13, 137, 15), // "AGVCurrentTaskI"
 QT_MOC_LITERAL(14, 153, 17), // "monitoringTimeout"
 QT_MOC_LITERAL(15, 171, 14), // "ON_signalPoint"
 QT_MOC_LITERAL(16, 186, 10), // "mousePoint"
-QT_MOC_LITERAL(17, 197, 4), // "Type"
-QT_MOC_LITERAL(18, 202, 15) // "sigAgvItemClick"
+QT_MOC_LITERAL(17, 197, 4) // "Type"
 
     },
     "monitoring\0sigAGVMoveTask\0\0AGVIP\0"
@@ -57,7 +56,7 @@ QT_MOC_LITERAL(18, 202, 15) // "sigAgvItemClick"
     "agvORderTask\0agvORderTaskI\0newAGVMoveTask\0"
     "taskType\0AGVCurrentTask\0AGVCurrentTaskI\0"
     "monitoringTimeout\0ON_signalPoint\0"
-    "mousePoint\0Type\0sigAgvItemClick"
+    "mousePoint\0Type"
 };
 #undef QT_MOC_LITERAL
 
@@ -67,7 +66,7 @@ static const uint qt_meta_data_monitoring[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -75,13 +74,12 @@ static const uint qt_meta_data_monitoring[] = {
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    6,   39,    2, 0x06 /* Public */,
-      10,    3,   52,    2, 0x06 /* Public */,
+       1,    6,   34,    2, 0x06 /* Public */,
+      10,    3,   47,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      14,    0,   59,    2, 0x0a /* Public */,
-      15,    2,   60,    2, 0x0a /* Public */,
-      18,    0,   65,    2, 0x0a /* Public */,
+      14,    0,   54,    2, 0x0a /* Public */,
+      15,    2,   55,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::UInt, QMetaType::UInt, QMetaType::Int, QMetaType::Int, 0x80000000 | 8,    3,    4,    5,    6,    7,    9,
@@ -90,7 +88,6 @@ static const uint qt_meta_data_monitoring[] = {
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::QPointF, QMetaType::QString,   16,   17,
-    QMetaType::Void,
 
        0        // eod
 };
@@ -105,7 +102,6 @@ void monitoring::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 1: _t->newAGVMoveTask((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< AGVCurrentTask(*)>(_a[3]))); break;
         case 2: _t->monitoringTimeout(); break;
         case 3: _t->ON_signalPoint((*reinterpret_cast< QPointF(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 4: _t->sigAgvItemClick(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -156,13 +152,13 @@ int monitoring::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 4;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 4)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 5;
+        _id -= 4;
     }
     return _id;
 }

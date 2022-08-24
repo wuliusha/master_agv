@@ -1,9 +1,5 @@
 ﻿#include "AgvStatus.h"
 #include "ui_AgvStatus.h"
-#include "agvcarpool.h"
-#include <QTimer>
-#include <QColor>
-#include <QTableWidgetItem>
 
 AgvStatus::AgvStatus(QWidget *parent) :
     QWidget(parent),autoOpenCount(0),
@@ -27,6 +23,17 @@ AgvStatus::AgvStatus(QWidget *parent) :
             ui->agvShow->setItem(i,j,item);
         }
     }
+
+    //返回指令接收状态
+    moveTaskStateMap.insert(0,"成功");
+    moveTaskStateMap.insert(1,"任务过多失败");
+    moveTaskStateMap.insert(2,"当前序号已经接收过");
+    moveTaskStateMap.insert(3,"设置目标参数出错");
+    moveTaskStateMap.insert(4,"小车当前位置信息无法执行动作任务");
+    moveTaskStateMap.insert(5,"设置角度不是 0 90 180 270这几个角度");
+    moveTaskStateMap.insert(6,"任务长度与接收数据不一致");
+    moveTaskStateMap.insert(7,"原地旋转二维码坐标给定不正确");
+    moveTaskStateMap.insert(8,"无法执行任务（故障或者复位中）");
 
 }
 
@@ -174,13 +181,12 @@ void AgvStatus::timerTimeOut()
         }
         item = ui->agvShow->takeItem(i,0);
         item->setTextColor(agvStatusColor);
-        QString agvNum = agvMap.value(agvitem);
-
-        item->setText(QString("%1").arg(agvNum.right(1)));
+        item->setText(QString::number(agvitem->agvId));
         ui->agvShow->setItem(i,0,item);
+
         item = ui->agvShow->takeItem(i,1);
         item->setTextColor(agvStatusColor);
-        item->setText(QString("%1").arg(agvitem->agvStateItem.passPointState)+"-"+QString::number(agvitem->agvStateItem.doorPoint));
+        item->setText(QString("%1").arg(agvitem->agvStateItem.passPointState)+"-"+QString::number(agvitem->agvStateItem.ActionItem.doorPoint));
         ui->agvShow->setItem(i,1,item);
         item = ui->agvShow->takeItem(i,2);
         item->setTextColor(agvStatusColor);
@@ -224,7 +230,7 @@ void AgvStatus::timerTimeOut()
         item = ui->agvShow->takeItem(i,10);
         item->setTextColor(agvStatusColor);
         item->setText(QString("%1").arg(agvitem->agvStateItem.currentBatteryVoltageState
-                                        +"-"+agvitem->agvStateItem.currentSystemCurrentState));
+                                        +"-"+agvitem->agvStateItem.currentBatteryelectricity));
         ui->agvShow->setItem(i,10,item);
 
         item = ui->agvShow->takeItem(i,11);
@@ -240,12 +246,17 @@ void AgvStatus::timerTimeOut()
         item = ui->agvShow->takeItem(i,13);
         item->setTextColor(agvStatusColor);
         if(agvitem->agvStateItem.isFrontLaserNearInducedState || agvitem->agvStateItem.isRearLaserNearInducedState){
-            item->setText("障碍物");
+            item->setText(agvitem->agvStateItem.FarInducedState);
         }else{
             item->setText((agvitem->agvStateItem.isOnline?"在线":"掉线")+agvitem->agvStateItem.currentTaskCountState);
         }
-
         ui->agvShow->setItem(i,13,item);
+
+        item = ui->agvShow->takeItem(i,14);
+        item->setTextColor(agvStatusColor);
+        item->setText(moveTaskStateMap.value(agvitem->agvStateItem.moveTaskState));
+        ui->agvShow->setItem(i,14,item);
+
         ++i;
 
         if((ERROR_CODE)agvitem->agvStateItem.currentErrorCodeState.toInt() != ERROR_NULL ||

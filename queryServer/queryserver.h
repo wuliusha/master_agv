@@ -60,17 +60,15 @@ struct shelfBinInfo {
 
     int shelfBinIndex=0;       //所属架位索引
     QString shelfBindesc="";   //所属架位注释
-    int podId=0;               //货架编号
-    QString podIdDesc="";      //货架注释
+    QString podId="";          //货架编号
+    QString podIdDesc="";      //库位编码
 
     int containerIndex=0;      //容器编码索引 ->唯一
     QString containerCode="";  //容器编码 (即胶箱编码) ->唯一
+    int SAPTaskIndex=0;        //
     QString LabelNo="";        //工单凭证号
     materialShelfbin materialShelfbinI;
     QMap<QString, materialShelfbin> materialShelfbinMap;
-
-    QString storeCode="";      //仓号属性
-    QString customsType="";    //类型属性
 
     int binEnable=0;           //使用/禁用
     int showEnable=0;          //是否显示
@@ -91,16 +89,16 @@ struct shelfBinInfo {
 
 };
 
-struct countpick{
-    double allcount=0.00;       //今天的数量
-    double finishcount=0.00;    //已完成数量
-    double unfinishcount=0.00;  //未完成数量
-    double DN_count=0.00;       //待发DN
-    double SL_count=0.00;       //待发SL
-    double LM_count=0.00;       //待发LM
-    double Other_count=0.00;    //待发Other
-};
 
+
+struct deviceServer
+{
+    int Infocount=0;
+    QString deviceIP="";                            //设备客户端 IP
+    QByteArray queryArray;
+    QMap<QString,QByteArray>AnalysisArrayMap;       //设备客户端返回 数据 待处理缓存链表
+    QMap<QByteArray,QByteArray>deviceActionArray;   //设备动作指令 缓存链表
+};
 
 //周边控制板
 struct controlbox {
@@ -124,38 +122,42 @@ struct controlbox {
     int Y12=0;             //1表示有信号  0表示无信号
     int Y11=0;             //1表示有信号  0表示无信号
     int Y10=0;             //1表示有信号  0表示无信号
+
+    QDateTime datetimer;
 };
 
-struct StationInfo{            //站点基础信息
-    int StationId=0;           //站点Id
-    QString StationDesc="";    //站点名称
-    QString StationIP="";      //站点IP地址
-    int floor=0;               //站点所在楼层
+struct deviceI
+{
+    /******************* 设备基础定义 **************/
+    int deviceId=0;                 //设备Id
+    QString deviceIP="";            //设备IP
+    QString deviceDesc="";          //设备名称
+    QString deviceType="";          //设备类型
 
-    int online=0;              //0离线  1在线
-    int status=0;              //状态 0无料框  1有料框
-    int sensor_1=0;            //1号光电感应 状态  0无  1有
-    int sensor_2=0;            //2号光电感应 状态  0无  1有
+    int onLine=0;                   //是否在线
+    int onLinecount=0;              //是否在线
+    int status=0;                   //station 0无料框  1有料框      door 0关门   1开门
+    QString statusDesc="";          //station 0无料框  1有料框      door 0关门   1开门
+    int sensor_1=0;                 //1号光电感应 状态  0无  1有
+    int sensor_2=0;                 //2号光电感应 状态  0无  1有
+    int sensor_3=0;                 //2号光电感应 状态  0无  1有
+    int enable=0;                   //使能
+    int checked=0;                  //是否选中
+    controlbox controlboxItem;      //所有 IO 信息
 
-    int action=0;              //当前动作指令
-    QString StationType="";    //站点类型  IN二楼入库  OUT二楼出库   2F_L二楼升降机 3F_L三楼升降机  3F_S 三楼产线
-    int page=0;                //当前页面索引
+    /******************* 接驳台类型 **************/
+    QString StationType="";         //站点类型
+    QString stationDesc="";         //站点名称
+    int Currentpoint=0;             //当前所在二维码
+    QString waitDesc="";            //站点等待点名称
+    int waitPoint=0;                //站点等待点二维码
 
-
-    int taskStatus=0;           //任务状态  0空闲  1占用  2正在执行  3执行完成  0空闲
-    int currentpoint=0;         //站点所在二维码
-    int liftpoint=0;            //对应升降机的二维码
-
-    QString containerCode="";   //容器编码 (即胶箱编码) ->唯一
-    QStringList TaskIndexList;  //用于二楼出库时 判断接驳台任务分配
-    QString TaskIndexListdesc;  //用于二楼出库时 判断接驳台任务分配
-
-    QString obligate1="";        //预留1
-    QString obligate3="";        //预留3
-    QString obligate4="";        //预留4
-    int enable=0;                //使用禁用使能
-
+    int SAPTaskIndex=0;             //任务索引 唯一值
+    int taskStatus=0;               //任务状态
+    QString taskStatusDesc="";      //任务状态注释
+    int agvNum=0;                   //小车编号
 };
+
 
 struct record_log{          //出入库，查仓，记录
     int logId=0;
@@ -202,7 +204,7 @@ struct ServerInit //基础信息
     QMap<QString,doorSubTask>doorSubTaskMap;        //所有自动门的基础信息
     QMap<QString,eventCode>eventCodeMap;            //ESS-P 事件 回调类型
     QMap<QString,QString>StationCodeMap;            //工作站与 ESS-P坐标点
-
+    QMap<QString,QString>BindescPodIdMap;           //架位绑定转换 库位翻译
     QMap<QString,int>AGVIPInitMap;                  //AGVIP 与 待机点
     QMap<QString,int>StationPointMap;               //工作站名称 与 二维码绑定
 
@@ -210,16 +212,15 @@ struct ServerInit //基础信息
 
 struct ServerItem //需要实时更信息 链表表 整合
 {
-    QMap<QString,QString>PoidAndDesc;                   //架位绑定转换
-    QMap<QString,shelfBinInfo>shelfBinInfoMap;          //实时更新 Bin 的状态信息
-
-    QMap<QString,StationInfo>StationInfoMap;            //实时更新站点的状态信息
-
     QMap<QString,LiftCode>LiftCodeMap;                  //升降机各个接驳台任务状态信息
-    QMap<QString,AGVCurrentTask>AGVCurrentTaskMap;      //AGV状态信息
+    QMap<QString,AGVCurrentTask*>AGVCurrentTaskMap;     //AGV状态信息
+    QMap<int, SAPExcelInfo>currentSAPExcelInfoTask;     //SAP 正在执行或未完成的任务
+};
 
-    QMap<int, SAPExcelInfo>currentSAPExcelInfoTask;    //SAP 正在执行或未完成的任务
-
+struct allServerInit
+{
+    ServerInit ServerInitItem;      //基础信息
+    ServerItem CurrentServerItem;   //需要实时更信息 链表表 整合
 };
 
 class queryServer : public QObject
@@ -230,16 +231,15 @@ public:
 
     REGISTERGETINSTANCE(queryServer)//获取单例模式
 
+    allServerInit ALLServerInitItem;
+    void setCurrentServerInitItem(ServerItem CServerItem, ServerInit CServerInit);
 
-    ServerInit ServerInitItem;
-    void setCurrentServerInitItem(ServerInit CServerInit);
-
-    ServerInit getCurrentServerInitItem();
+    allServerInit getCurrentServerInitItem();
 
     QList<User_Info>getUserInfoList();
+    //**********************************任务查询********************************//
 
-    bool setcurrentSAPExcelInfoTask();
-
+    QMap<int, SAPExcelInfo>querySAPExcelInfoList(slecetSAP_Log slecetSAP_LogI);
 
     QMap<int,email_message> getsyserror_message();              //获取 未处理的系统异常信息
     bool setsyserror_message(email_message email_messageI);     //设置 已处理的系统异常信息状态
@@ -248,12 +248,6 @@ public:
 
     //物料件号-仓号-批次 作为唯一键值
     QMap<QString ,materialInfo >querymaterialInfoMap();
-
-    //ikey -架位  多对一 物料件号-仓号-批次作为唯一键值
-    QMap<QString ,materialShelfbin >querymaterialshelfBinMap(shelfBinInfo shelfBinInfoItem);
-
-    shelfBinInfo querymaterialshelfBinMap_(shelfBinInfo shelfBinInfoItem);
-
 
     //////////////////////////////////////////////////
     /// \brief queryrecord_IntOut  查询操作台出入库操作记录

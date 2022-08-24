@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_TcpServer_t {
-    QByteArrayData data[20];
-    char stringdata0[264];
+    QByteArrayData data[14];
+    char stringdata0[184];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,23 +44,14 @@ QT_MOC_LITERAL(9, 120, 8), // "ClientIP"
 QT_MOC_LITERAL(10, 129, 13), // "AnalysisArray"
 QT_MOC_LITERAL(11, 143, 7), // "qintptr"
 QT_MOC_LITERAL(12, 151, 10), // "descriptor"
-QT_MOC_LITERAL(13, 162, 21), // "ON_ClientDisconnected"
-QT_MOC_LITERAL(14, 184, 21), // "ON_DeviceStatusAction"
-QT_MOC_LITERAL(15, 206, 10), // "deviceType"
-QT_MOC_LITERAL(16, 217, 9), // "orderType"
-QT_MOC_LITERAL(17, 227, 6), // "Action"
-QT_MOC_LITERAL(18, 234, 20), // "ON_setConfigureArray"
-QT_MOC_LITERAL(19, 255, 8) // "TaskType"
+QT_MOC_LITERAL(13, 162, 21) // "ON_ClientDisconnected"
 
     },
     "TcpServer\0sigLiftStatuschage\0\0DeviceIP\0"
     "ActionArray\0sigDeviceStatuschage\0"
     "ON_SendTimer\0ON_ReceiveData\0"
     "TcpServerProcessing\0ClientIP\0AnalysisArray\0"
-    "qintptr\0descriptor\0ON_ClientDisconnected\0"
-    "ON_DeviceStatusAction\0deviceType\0"
-    "orderType\0Action\0ON_setConfigureArray\0"
-    "TaskType"
+    "qintptr\0descriptor\0ON_ClientDisconnected"
 };
 #undef QT_MOC_LITERAL
 
@@ -70,7 +61,7 @@ static const uint qt_meta_data_TcpServer[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -78,16 +69,14 @@ static const uint qt_meta_data_TcpServer[] = {
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,   54,    2, 0x06 /* Public */,
-       5,    2,   59,    2, 0x06 /* Public */,
+       1,    2,   44,    2, 0x06 /* Public */,
+       5,    2,   49,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       6,    0,   64,    2, 0x0a /* Public */,
-       7,    0,   65,    2, 0x0a /* Public */,
-       8,    3,   66,    2, 0x0a /* Public */,
-      13,    0,   73,    2, 0x0a /* Public */,
-      14,    4,   74,    2, 0x0a /* Public */,
-      18,    2,   83,    2, 0x0a /* Public */,
+       6,    0,   54,    2, 0x0a /* Public */,
+       7,    0,   55,    2, 0x0a /* Public */,
+       8,    3,   56,    2, 0x0a /* Public */,
+      13,    0,   63,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString, QMetaType::QByteArray,    3,    4,
@@ -98,8 +87,6 @@ static const uint qt_meta_data_TcpServer[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString, QMetaType::QByteArray, 0x80000000 | 11,    9,   10,   12,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString, QMetaType::QString, QMetaType::QString, QMetaType::Int,    3,   15,   16,   17,
-    QMetaType::Void, QMetaType::QString, QMetaType::QByteArray,   19,   10,
 
        0        // eod
 };
@@ -116,8 +103,6 @@ void TcpServer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 3: _t->ON_ReceiveData(); break;
         case 4: _t->TcpServerProcessing((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QByteArray(*)>(_a[2])),(*reinterpret_cast< qintptr(*)>(_a[3]))); break;
         case 5: _t->ON_ClientDisconnected(); break;
-        case 6: _t->ON_DeviceStatusAction((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3])),(*reinterpret_cast< int(*)>(_a[4]))); break;
-        case 7: _t->ON_setConfigureArray((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QByteArray(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -168,13 +153,13 @@ int TcpServer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 6)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 6;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 6)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 8;
+        _id -= 6;
     }
     return _id;
 }

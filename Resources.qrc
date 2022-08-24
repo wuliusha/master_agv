@@ -43,5 +43,6 @@
         <file>image/system_upgrade.png</file>
         <file>image/task.png</file>
         <file>image/unchecked.png</file>
+        <file>image/login.png</file>
     </qresource>
 </RCC>

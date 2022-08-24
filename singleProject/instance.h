@@ -200,7 +200,13 @@ struct User_Info//用户个人信息
 };
 
 struct RW_Excel{//导出excel
-    int corlor=0;       //-1 红色(异常)  0 默认颜色  1 绿色（到达且已扫描）  2 黄色()  100 浅灰(完成)
+    //白色正常显示颜色          0
+    //绿色选中显示颜色          1
+    //橙黄色待执行任务显示颜色   2
+    //棕色正在执行任务显示颜色   3
+    //红色异常任务显示颜色      4
+
+    int corlor=0;
     int errorStatus=0;  //0 无错误  1拦截错误(可勾选) 2 异常错误(不可勾选)
     int checked=-1;     //-1默认状态   0 默认不勾选   1勾选状态
     int fontclrlor=0;   //字体颜色 默认 0白色   1红色  (离线)
@@ -248,7 +254,7 @@ struct RW_Excel{//导出excel
 //SAP 上载任务 Excel 对应关系
 struct SAPExcelInfo{
 
-    int SAPTaskIndex;           //任务索引 唯一值
+    int SAPTaskIndex=0;           //任务索引 唯一值
     QString taskType="";        //任务类型  OUT-出库  IN-入库  MOVE-移库  Empty-返空箱
     QString taskTypeDesc="";
 
@@ -274,7 +280,10 @@ struct SAPExcelInfo{
     //返回空箱: -1 默认值  0等待配送  1开始运输  2到达起始楼层  3开始前往目标楼层  4到达目标楼层  5开始运输  100任务完成
 
     //移库:-1 默认值  0开始执行   1取箱中   3取箱成功  4等待放箱  5放箱成功  7任务完成
+    bool taskStatusbool=true;   //状态变化时， false不需要保存到数据库
     int taskStatus=-1;          //任务状态
+    int latstaskStatus=-1;      //上一个任务状态   当前状态与上一状态不一致时更新数据库
+    int codeStatus=0;           //库位状态
     QString taskStatusDesc="";  //任务状态注释
 
     QString sourcestation="";   //来源 入库为NULL，出库为库位
@@ -304,13 +313,16 @@ struct SAPExcelInfo{
     QString errortextEdit="";  //异常原因详细信息
 
     QString lastuser;          //操作员
+
+    QDateTime queryTimer;      //查询时间
     QDateTime taskTimer;       //更新时间
+    bool taskTimerbool=true;   //true 允许提交更新
     QDateTime creatTimer;      //创建时间
     QDateTime finishTimer;     //完成时间
 
 /********************* MES 的订单物料信息 *********************/
 
-    QString LabelNo="";        //贴纸凭证号
+    QString LabelNo="";        //订单编码
     QString Material="";       //物料编码
     QString customsType="";    //类型属性
     QString storeCode="";      //仓号属性
@@ -373,7 +385,7 @@ struct slecetSAP_Log{//按照条件查询 数据库的 SAP任务、或者 操作
     int taskStatus_s=0;
     int taskStatus_e=0;
 
-    int taskType=0;//任务类型  1出库  2入库 3盘点 4查仓 5改位入库
+    QString taskType="";         //任务类型  1出库  2入库 3盘点 4查仓 5改位入库
     int operaterIndex=0;
     QString ShelfBindesc="";
 
@@ -458,6 +470,8 @@ struct LiftCode//电梯 类任务
     int SAPTaskIndex=0;          //任务索引 唯一值
     QString containerCode="";    //容器编码 (即胶箱编码) ->唯一
 
+    int checked=-1;     //-1默认状态   0 默认不勾选   1勾选状态
+
 };
 
 struct LiftTask//电梯任务
@@ -513,6 +527,7 @@ struct AGVCurrentTask          //AGV任务动作
     int AGVId=0;                //小车编号
     QString AGVIP="";           //小车 ip
     int enable=0;               //1使用  0禁用
+    bool isOnline=false;
     int AGVType=0;              //AGV类型    0默认小精灵   1夹抱AGV
     int floornum=0;             //AGV所在楼层
     int waitPoint=0;            //待机点二维码
@@ -526,7 +541,9 @@ struct AGVCurrentTask          //AGV任务动作
     int VoltageState=0;         //当前电压或电量
     int RunStatus=2;            //当前运行状态  1 运行 2 停止
     int RotaryState=0;          //当前转盘高度 mm
+    int agverror=0;             //当前错误代码
 
+    bool taskreset=false;       //系统异常关闭时，恢复之前的任务状态
     int Currentdestpoint=0;     //当前目标二维码
     int destpoint=0;            //第一个目标二维码
     int Nextdestpoint=0;        //下一个目标二维码
@@ -545,6 +562,7 @@ struct AGVCurrentTask          //AGV任务动作
     QString taskType="";        //任务类型 IN入库  OUT出库
     int SAPTaskIndex=0;         //任务索引 唯一值
     QString containerCode="";   //容器编码 (即胶箱编码) ->唯一
+    QDateTime WaitTimer_;       //等待计时 默认15秒
 
     QString obligate1="";       //预留
     QString obligate2="";       //预留

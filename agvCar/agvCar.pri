@@ -1,10 +1,12 @@
 HEADERS += \
+    $$PWD/agv_single.h \
     $$PWD/agvcar.h \
     $$PWD/agvcarpool.h \
     $$PWD/agvcarsocket.h \
     $$PWD/AgvStatus.h
 
 SOURCES += \
+    $$PWD/agv_single.cpp \
     $$PWD/agvcar.cpp \
     $$PWD/agvcarpool.cpp \
     $$PWD/agvcarsocket.cpp \

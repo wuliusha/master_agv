@@ -4,7 +4,7 @@ TcpClient::TcpClient(QObject *parent) : QObject(parent)
 {
     ClientTimer = new QTimer(this);
     connect(ClientTimer,&QTimer::timeout,this,&TcpClient::ON_SendTimer);
-    ClientTimer->start(1000);
+    ClientTimer->start(1200);
 }
 
 TcpClient::~TcpClient()
@@ -171,7 +171,7 @@ void TcpClient::receiveTcpReadyRead()
     //返回的数据大小不定,需要使用_lastMessage成员变量存放多次触发槽读取的数据。
     QByteArray BoxByteArray = _tcpSocket->readAll();
     //qintptr descriptor=_tcpSocket->socketDescriptor();
-    if(!BoxByteArray.isEmpty()){
+    if(!BoxByteArray.isEmpty() && BoxByteArray.size()==18){
         //qDebug()<<"TcpClient----> TcpServerIP:"<<TcpServerIP<<" AnalysisArray:"<<BoxByteArray.toHex();
         emit sigLiftStatuschage(TcpServerIP,BoxByteArray);                     //实时更新电梯状态信息
         //TcpServerProcessing(BoxByteArray,descriptor);
@@ -197,7 +197,6 @@ void TcpClient::TcpServerProcessing(QByteArray AnalysisArray, qintptr descriptor
 
             QString taskType= ReplyJson.value("taskType").toString();
             QJsonArray rootFruitList=ReplyJson.value("ArrayType").toArray();
-
 
 //            qDebug()<<"ReplyJson "<<ReplyJson;
 //            qDebug()<<"ReplyJson -->"<<ReplyJson.value("taskType").toString()<<value.isArray()<<rootFruitList.size();

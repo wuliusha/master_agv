@@ -20,12 +20,7 @@ struct TcpServer_Client
 
     QMap<int,QByteArray>ConfigureArray_wait;        //完成入库的任务
     QMap<int,QByteArray>ConfigureArray_run;         //正在运行的任务
-
-    QMap<QString,QByteArray>ConfigureArray_Info;    //每次平板登录时发送 基础信息 缓存链表
-    QByteArray ConfigureArray_agv;                  //AGV小车运行信息 基础信息 缓存链表
 };
-
-
 
 
 class TcpServer :  public QTcpServer
@@ -55,14 +50,13 @@ public:
     int currentTaskcount=0;
     QList<QString>deleteSocketList;
     QMap<QString,QTcpSocket*>TcpSocketList;
-    QMap<QString,TcpServer_device>TcpServer_deviceMap;             //平板客户端链接缓存
+    QMap<QString,deviceServer>deviceServerMap;             //平板客户端链接缓存
 
-    QMap<QString,QByteArray>ConfigureArray_Info;                   //基础信息 缓存链表
     QMap<int, SAPExcelInfo>currentSAPExcelInfoTask;                //SAP 正在执行或未完成的任务
 
-    void setTcpServer_deviceInfo(TcpServer_device TcpServer_deviceI);          //设置客户端基础信息
+    void setdeviceServerInfo(deviceServer deviceServerI);          //设置客户端基础信息
 
-    void setTcpServer_deviceAction(QString deviceIP,QByteArray ActionArray);   //设置客户端动作指令信息
+    void setdeviceServerAction(QString deviceIP,QByteArray ActionArray);   //设置客户端动作指令信息
 
     QByteArray getActionArray(QString ClientIP);
 
@@ -74,11 +68,7 @@ signals:
 
 public slots:
 
-    //DeviceIP：设备IP     deviceType：设备类型   orderType：动作指令   Action：动作标识
-    void ON_DeviceStatusAction(QString DeviceIP,QString deviceType, QString orderType, int Action);
 
-
-    void ON_setConfigureArray(QString TaskType,QByteArray AnalysisArray);     //设置 Client 基础配置数据缓存   TaskType-类型识别号
 
 };
 

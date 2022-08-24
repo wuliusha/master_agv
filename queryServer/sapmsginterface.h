@@ -61,30 +61,25 @@ struct WebService{
 
 /*******微网优联  MES************/
 struct WWYLPOST{
-
     QString actionId="MES接口";
-    QString taskId="";  //任务唯一编码
-    QString operate=""; //操作,IN-入库，OUT-出库
-    QString boxNo="";   //箱号
-    QStringList pcbList;//pcb集合
+    QString taskId="";          //任务 ID,唯一性
+    QString taskType="";        //任务类型(OUT 出库，MOVE 点对点IN 入库)
+    QString boxNo="";           //料框编号，非必填（可以输入产品编码获取料框）
+    QString proNo="";           //工单号
+    QString boxNum="";          //料箱数量(入库时默认是1,出库时>0)
+    QString source="";          //移库为起始库位(入库，出库为空)
+    QString destination="";     //移库为目标库位，出库为线体(入库可指定库位入库，否则为空)
 
-    QString source="";      //来源  入库为NULL，出库为库位
-    QString destination="";//目的地。入库为仓库，出库为线体
-
-    /*******下达订单任务************/
-    QString proNo="";   //产品编码
-    QString pcbNum="";  //pcb数量
-
-    /*******返回任务状态************/
-    QString resultStatus="";//执行结果,1-开始执行，2-执行中，3执行失败，4-执行成功
-
-
+    //状态反馈
+    QString taskStatus="";//任务状态
+    QString taskStatusDesc="";//任务状态
 };
 
 
 /*******海柔************/
 struct ESS_Request{
 
+    QString iKey="";
     int pathId=0;
     QString actionId="";//0查询状态  1任务查询  2出库  3移库  4回库  5任务取消
 
@@ -105,13 +100,14 @@ struct ESS_Request{
     QString taskTemplateCode="";   //(移库,回库)任务模板   ()任务模板
 
     /********** tasks  任务列表 (taskDescribe  任务描述) ************/
-    QString containerCode="";      //货箱编码
-    //QString toStationType;    //(出库)目标工作站类型
-    QString toStationCode="";      //(出库)目标工作站编码
-    QString toLocationCode="";     //(移库 回库)目标库位编码
-    QString fromLocationCode="";   //(出库)起始工作位  (移库)起始库位编码
+    QString containerCode="";       //货箱编码
+    //QString toStationType;        //(出库)目标工作站类型
+    QString toStationCode="";       //(出库)目标工作站编码
+    QString toLocationCode="";      //(移库 回库)目标库位编码
+    QString fromLocationCode="";    //(出库)起始工作位  (移库)起始库位编码
 
-    QString positionCode="";      //容器入场 / 容器离场
+    QString positionCode="";        //容器入场 / 容器离场
+    QString shelfBindesc="";        //容器移出  所属架位注释 -- ESS()
 
 };
 
@@ -174,22 +170,14 @@ public:
 
     //static sapMsgInterface* getInstance();
     QTimer *MsgTimer;
-    CurrentSend CurrentSendI;
-    CurrentSend CurrentSendI_;
-    QMap<int ,sapPath >sapPathMap;
-    QMap<QString ,int>currentIkeyMap;//SAP 数据 错误计时  最多只发 3次
+    QMap<int ,sapPath >sapPathMap;          //MES 接口路径
+    QMap<QString ,int>currentIkeyMap;       //SAP 数据 错误计时  最多只发 3次
+    QMap<QString,WebService>WebServiceMap;  //服务 请求链表
 
-    QMap<QString,WebService>WebServiceMap;//待 请求
+    void setSapPathMap();                   //读取数据库的路径配置信息
 
-    void setSapPathMap();           //读取数据库的路径配置信息
-    void setCurrentSend(CurrentSend CurrentSend0);
-    CurrentSend getCurrentSend();   //缓存最新提交的路径以及数据信息
-
-    void setCurrentSend_(CurrentSend CurrentSend0);
-    CurrentSend getCurrentSend_();   //缓存最新提交的路径以及数据信息
-
-    QMap<int ,sapPath > getsapPathMap();//获取数据库的路径配置信息
-    void setLabelMsgclear();//取消查询sap接口任务任务
+    QMap<int ,sapPath > getsapPathMap();    //获取数据库的路径配置信息
+    void setLabelMsgclear();                //取消查询sap接口任务任务
 
 public slots:
 
@@ -213,6 +201,10 @@ public:
     void ReplyJson_robot(QString iKey, QJsonObject ReplyJsonI);
     ESSRobot GetMsgRecv_robot(QString iKey);
 
+    QMap<QString,QString>taskCodeInfoMap;//任务状态
+    void ReplyJson_taskCode(QString iKey, QJsonObject ReplyJsonI);
+    QString GetMsgRecv_taskCode(QString iKey);
+
     //<<<<<<<<<< POST 接口返回 <<<<<<<<<<<<
     QMap<QString,ReplyMsg>ReplyMsgMap;
     void ReplyJson_Msg_MES(QString iKey, QJsonObject ReplyJson,QString actionType);//MES 接口返回
@@ -229,8 +221,6 @@ public:
     /***  微网优联 任务下达 以及状态返回***/
     void taskCodes_WW(QString iKey,WWYLPOST WWYLPOSTII,QString UserBadge,int pathId);
     QJsonObject posttaskCodes_WW(QString iKey,WWYLPOST WWYLPOSTII);
-
-
 
     /***ESS_P协议: 0查询状态  1任务查询  2出库  3移库  4回库  5任务取消***/
     QMap<QString ,ESS_Request>ESS_RequestMap;
@@ -252,16 +242,13 @@ public:
     void taskCodes_actionId_Map(QString iKey,QMap<QString, ESS_Request>ESS_RequestMap,QString UserBadge,int pathId);
     QJsonObject posttaskCodes_actionId_Map(QString iKey,QMap<QString, ESS_Request>ESS_RequestMap);
 
-
     //任务取消
     void taskCodes_cancel(QString iKey,ESS_Request ESS_RequestI,QString UserBadge,int pathId);
     QJsonObject posttaskCodes_cancel(QString iKey,ESS_Request ESS_RequestI);
 
-
     //事件回调
     void taskCodes_request(QString iKey,ESS_Request ESS_RequestI,QString UserBadge,int pathId);
     QJsonObject posttaskCodes_request(QString iKey,ESS_Request ESS_RequestI);
-
 
 signals:
     void ReplyWebService(QJsonObject RequestJson, QJsonObject ReplyJson,QString UserBadge,QString ActionType);

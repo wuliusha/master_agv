@@ -15,9 +15,11 @@ log_single *log_single::GetInstance()
     else
     {
         mutex.lock();
-        log_singleItiem=new log_single;
-        return log_singleItiem;
+        if(log_singleItiem == nullptr){
+            log_singleItiem=new log_single;
+        }
         mutex.unlock();
+        return log_singleItiem;
     }
 }
 

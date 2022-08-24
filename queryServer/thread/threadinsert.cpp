@@ -158,12 +158,13 @@ bool ThreadInsert::newSAPExcelInfoTask(QMap<QString, SAPExcelInfo> newStroageTas
         sqlQuery.addBindValue(iter.value().MaterialListdesc); //物料编码 集合
 
         if(sqlQuery.exec()){
-            qDebug()<<"insert sql ##############S newStroageTaskMap:"<<iter.value().taskType<<iter.value().containerCode<<iter.value().taskStatus<<iter.value().taskStatusDesc;
+            qDebug()<<"insert sql ##############S newStroageTaskMap:"<<iter.value().taskType<<" LabelNo:"<<iter.value().LabelNo
+                  <<" containerCode:" <<iter.value().containerCode<<" taskStatus:"<<iter.value().taskStatus<<iter.value().taskStatusDesc;
         }else {
             qDebug()<<"insert sql **************E newStroageTaskMap:"<<iter.value().LabelNo<<iter.value().taskType;
         }
 
-        iter++;
+        ++iter;
     }
 
     if(!sqlDatabase.commit()){
@@ -230,7 +231,7 @@ bool ThreadInsert::insertIntoNewmaterialShelfbinInfo(QMap<QString, materialShelf
             }
         }
 
-        iter++;
+        ++iter;
     }
 
     if(sqlDatabase.commit()){
@@ -253,11 +254,11 @@ bool ThreadInsert::insertIntoshelfBinInfoInfo(QMap<QString, shelfBinInfo> newshe
     while (iter!=newshelfBinInfoMap.end()) {
         shelfBinInfo shelfBinInfoI=iter.value();
         sqlQuery.prepare("INSERT INTO [dbo].[shelfInfo] ([shelfBinIndex], [shelfBindesc],"
-                         "[podId], [podIdDesc],[containerIndex],[containerCode],[storeCode],"
+                         "[podId], [podIdDesc],[containerIndex],[containerCode],[SAPTaskIndex],"
                          "[LabelNo], [binEnable],[showEnable],[setFull],[layer],[side],"
                          "[volume], [allvolume],[percent],[realqty],"
                          "[weight],[maxweight]) VALUES (:shelfBinIndex,:shelfBindesc,"
-                         ":podId,:podIdDesc,:containerIndex,:containerCode,:storeCode,"
+                         ":podId,:podIdDesc,:containerIndex,:containerCode,:SAPTaskIndex,"
                          ":LabelNo,:binEnable,:showEnable,:setFull,:layer,:side,"
                          ":volume,:allvolume,:percent,:realqty,"
                          ":weight,:maxweight );");
@@ -268,7 +269,7 @@ bool ThreadInsert::insertIntoshelfBinInfoInfo(QMap<QString, shelfBinInfo> newshe
         sqlQuery.addBindValue(shelfBinInfoI.podIdDesc);             //货架注释
         sqlQuery.addBindValue(shelfBinInfoI.containerIndex);        //容器编码索引 ->唯一
         sqlQuery.addBindValue(shelfBinInfoI.containerCode);         //容器编码 (即胶箱编码) ->唯一
-        sqlQuery.addBindValue(shelfBinInfoI.storeCode);             //仓号属性
+        sqlQuery.addBindValue(shelfBinInfoI.SAPTaskIndex);             //仓号属性
         sqlQuery.addBindValue(shelfBinInfoI.LabelNo);               //工单凭证号
         sqlQuery.addBindValue(shelfBinInfoI.binEnable);             //使用/禁用
         sqlQuery.addBindValue(shelfBinInfoI.showEnable);            //是否显示
@@ -287,7 +288,7 @@ bool ThreadInsert::insertIntoshelfBinInfoInfo(QMap<QString, shelfBinInfo> newshe
 
         }
 
-        iter++;
+        ++iter;
     }
 
     if(sqlDatabase.commit()){
@@ -356,7 +357,7 @@ void ThreadInsert::insertIntorecord_sap(QMap<QString ,labelMsgStruct >insertreco
         if(!sqlQuery.exec()){
             qDebug()<<"record_sap: "<<labelMsgStructI.labelNo;
         }
-        iter++;
+        ++iter;
     }
 
     if(sqlDatabase.commit()){
@@ -419,7 +420,7 @@ void ThreadInsert::insertrecord_log(QMap<QString, record_log> record_logMap, int
             count++;
             qDebug()<<"record_log:"<<iter.value().Material<<iter.value().store<<iter.value().batch<<iter.value().readlQty<<"  count:"<<count;
         }
-        iter++;
+        ++iter;
     }
 
     if(!sqlDatabase.commit()){

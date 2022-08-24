@@ -20,21 +20,37 @@
    <property name="leftMargin">
     <number>0</number>
    </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
    <property name="rightMargin">
     <number>0</number>
    </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,10">
-     <property name="spacing">
-      <number>10</number>
-     </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QWidget" name="widget_2" native="true">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>75</height>
+        </size>
+       </property>
        <property name="styleSheet">
         <string notr="true">color: white;
-background-color: rgb(148, 214, 218);</string>
+background-color: rgb(255, 119, 15);
+</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
+        <property name="topMargin">
+         <number>7</number>
+        </property>
+        <property name="bottomMargin">
+         <number>7</number>
+        </property>
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="3,1">
           <property name="rightMargin">
@@ -47,6 +63,9 @@ background-color: rgb(148, 214, 218);</string>
               <width>16777215</width>
               <height>60</height>
              </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
             </property>
             <property name="currentIndex">
              <number>0</number>
@@ -83,7 +102,6 @@ background-color: rgb(148, 214, 218);</string>
                     </property>
                     <property name="styleSheet">
                      <string notr="true">color:#ffffff;
-background-color: rgb(0, 166, 172);
 QComboBox::drop-down {
     subcontrol-position: top right;
     width: 30px;
@@ -101,18 +119,13 @@ QComboBox::drop-down {
                     </item>
                     <item>
                      <property name="text">
-                      <string>工单编码</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
                       <string>胶箱编码</string>
                      </property>
                     </item>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLineEdit" name="queryMaterial">
+                   <widget class="QLineEdit" name="queryLineEdit">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -166,6 +179,76 @@ background-color: rgb(255, 255, 255);</string>
                   </property>
                   <property name="styleSheet">
                    <string notr="true">background-color: rgb(255, 255, 255);</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>60</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>60</width>
+                    <height>45</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>16</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">
+QPushButton {
+	border: 1px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius:15px;border:none; /* 边框圆角 */
+	background-color: #00a6ac; /* 背景颜色 */
+	color: white;  
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+	border-image: url(:/image/close2.png);
+}
+
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}</string>
+                  </property>
+                  <property name="text">
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -319,12 +402,39 @@ background-color: rgb(81,81,81);</string>
                </font>
               </property>
               <property name="styleSheet">
-               <string notr="true">color: white;
-color:#ffffff;
-border-radius:15px;
-border-style: outset;
-border: 2px groove gray; 
-background-color: rgb(0, 166, 172);</string>
+               <string notr="true">
+QPushButton {
+	border: 1px solid #298DFF; /* QPushButton边框的宽度、样式和颜色 */
+	border-radius:15px;border:none; /* 边框圆角 */
+	background-color: #00a6ac; /* 背景颜色 */
+	color: white;  
+}
+ 
+QPushButton:hover {	/* 鼠标悬浮在QPushButton上时的状态 */
+	background-color: #298DFF;
+	color: #F2F2F2;
+	border-image: url(:/image/close2.png);
+}
+
+QPushButton:checked { /* QPushButton可选中时的状态 */
+	border: 1px solid #FF5242;
+	background-color: #F2F2F2;
+	color: #FF5242;
+}
+ 
+QPushButton:pressed { /* 鼠标按压在QPushButton上时的状态 */
+	background-color: #55ff7f;
+}
+ 
+QPushButton:checked:pressed { /* QPushButton处于可选中且鼠标按压在QPushButton上时的状态 */
+	background-color: #F2F2F2;
+}
+ 
+QPushButton:disabled { /* QPushButton禁用时的状态 */
+	border: 1px solid #CDCDCD;
+	background-color: #CDCDCD;
+	color: #B4B4B4;
+}</string>
               </property>
               <property name="text">
                <string>查询</string>
@@ -405,7 +515,7 @@ color: rgb(33, 33, 33);</string>
            <item>
             <widget class="QStackedWidget" name="stackedWidget_3">
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(189, 189, 186);</string>
+              <string notr="true">background-color: rgb(255, 119, 15);</string>
              </property>
              <widget class="QWidget" name="page_5"/>
              <widget class="QWidget" name="page_6"/>

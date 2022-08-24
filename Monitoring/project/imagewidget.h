@@ -16,6 +16,18 @@
 #include <QDebug>
 
 
+
+struct AgvItem{
+    int floor;
+    int agvNum; //小车编号
+    QString agvip;
+    QColor color;
+    int angle=0;
+
+    int stationX=0; //地图显示坐标
+    int stationY=0;
+};
+
 enum Enum_ZoomState{
     NO_STATE,
     RESET,
@@ -46,12 +58,18 @@ public:
     QPixmap getQGraphicsViewWH();//获取当前图片大小
     QPointF getmousePoint();
 
+    /********* 显示部分 **********/
+    void setAgvItemcarList_date(AgvItem AgvItemI);//根据状态信息更新显示状态
 
 signals:
     //void signalPoint(QPointF mousePoint,QString Type);//left
+
 public:
     QPointF mousePoint;
+    int floor=0;
     bool    left_Double=false;
+    bool    right_Double=false;
+    QList<AgvItem > AgvItemcarList;
 
 private:
     qreal   m_scaleValue;

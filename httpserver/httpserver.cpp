@@ -69,21 +69,25 @@ HttpServer::HttpServer(QObject *parent)
 // }}}
 
     qRegisterMetaType<SAPExcelInfo >("SAPExcelInfo");
+    qRegisterMetaType<QMap<QString,SAPExcelInfo>>("QMap<QString, SAPExcelInfo>");
+
 
     errorMsgMap.insert(-1,"非法值错误");
     errorMsgMap.insert(0,"创建成功");
     errorMsgMap.insert(1,"胶箱编码异常");
     errorMsgMap.insert(2,"任务类型异常");
-    errorMsgMap.insert(3,"物料编码异常");
+    errorMsgMap.insert(3,"工单编码异常");
     errorMsgMap.insert(4,"数量异常");
     errorMsgMap.insert(5,"胶箱编码重复");
-    errorMsgMap.insert(6,"当前任务无法出库");
-
+    errorMsgMap.insert(6,"当前工单数量不足");
+    errorMsgMap.insert(7,"当前库位无法入库");
+    errorMsgMap.insert(8,"当前库位无法移库");
+    errorMsgMap.insert(9,"出库数量不能为0");
     errorMsgMap.insert(100,"接收成功");
 
-//  StTimer = new QTimer(this);
-//  connect(StTimer,&QTimer::timeout,this,&HttpServer::ON_HttpServerTimer);
-//  StTimer->start(500);
+    StTimer = new QTimer(this);
+    connect(StTimer,&QTimer::timeout,this,&HttpServer::ON_HttpServerTimer);
+    StTimer->start(500);
 
 }
 
@@ -115,7 +119,6 @@ bool HttpServer::listen(quint16 port)
     return listen(QHostAddress::Any, port);
 }
 
-//127.0.0.1:58890/
 void HttpServer::onRequest(HttpRequest* req, HttpResponse* resp)
 {
 	//实现你的响应代码
@@ -144,18 +147,8 @@ void HttpServer::ON_newReplyData_task(QString ClientIP,ReplyJson ReplyJsonI,QJso
 {
     currentReplyJsonI=ReplyJsonI;
 
-    CurrentSendI.postJson=ReplyJson;
-    CurrentSendI.UrlPath="server";
-    //sapMsgInterface::getInstance()->setCurrentSend_(CurrentSendI);
-
-    if(ReplyJsonI.taskType=="newTask"){     //MES 创建订单任务
+    if(ReplyJsonI.taskType=="newTask"){         //MES 创建订单任务
         currentReplyJsonI=analysReplyJson_new(ReplyJson,currentReplyJsonI);
-    }if(ReplyJsonI.taskType=="taskStatus"){ //MES 任务状态反馈
-        currentReplyJsonI=analysReplyJson_taskStatus(ReplyJson,currentReplyJsonI);
-    }
-
-    if(ReplyJsonI.taskType=="agvTask"){         //创建 ESS-AGV 任务
-        currentReplyJsonI=analysReplyJson_agvnew(ReplyJson,currentReplyJsonI);
     }if(ReplyJsonI.taskType=="agvStatus"){      //ESS-AGV任务状态反馈
         currentReplyJsonI=analysReplyJson_agvStatus(ReplyJson,currentReplyJsonI);
     }
@@ -167,107 +160,66 @@ ReplyJson HttpServer::analysReplyJson_new(QJsonObject ReplyJson_,ReplyJson Reply
     QJsonObject ReplyJson=ReplyJson_;
     SAPExcelInfo SAPExcelInfoI;
     SAPExcelInfoI.taskId=ReplyJson.value("taskId").toString();
-    SAPExcelInfoI.taskType=ReplyJson.value("operate").toString();               //操作 OUT-出库  IN-入库
+    SAPExcelInfoI.taskType=ReplyJson.value("taskType").toString();
+    SAPExcelInfoI.LabelNo=ReplyJson.value("proNo").toString();                  //工单号
+    SAPExcelInfoI.containerCode=ReplyJson.value("boxNo").toString();            //容器编码 (即胶箱编码) ->唯一
+    SAPExcelInfoI.taskQty=ReplyJson.value("boxNum").toInt();                               //数量
+    SAPExcelInfoI.destination=ReplyJson.value("destination").toString();
+    SAPExcelInfoI.creatTimer=QDateTime::currentDateTime();
+
+    ReplyJsonI.status=0;
+    if(SAPExcelInfoI.taskType==""){
+        ReplyJsonI.status=2;//任务类型异常
+    }if(SAPExcelInfoI.LabelNo==""){
+        ReplyJsonI.status=3;//工单编码异常
+    }
+
     if(SAPExcelInfoI.taskType=="IN"){
         SAPExcelInfoI.taskTypeDesc="入库";
         SAPExcelInfoI.sourcestation="STATION-01";
         SAPExcelInfoI.destination="";
+        if(SAPExcelInfoI.containerCode.trimmed().size()!=10){
+            ReplyJsonI.status=1;//胶箱编码异常
+        }
     }if(SAPExcelInfoI.taskType=="OUT"){
         SAPExcelInfoI.taskTypeDesc="出库";
-        SAPExcelInfoI.sourcestation="";
+        SAPExcelInfoI.floorId="2-"+SAPExcelInfoI.destination.left(1);//楼层走向  2F-3F 3F-2F
     }if(SAPExcelInfoI.taskType=="MOVE"){
         SAPExcelInfoI.taskTypeDesc="移库";
-        SAPExcelInfoI.sourcestation=ReplyJson.value("source").toString();       //目的地。入库为库位，出库为线体
-    }
-
-    SAPExcelInfoI.destination=ReplyJson.value("destination").toString();    //目的地。入库为库位，出库为线体
-    SAPExcelInfoI.containerCode=ReplyJson.value("boxNo").toString();            //容器编码 (即胶箱编码) ->唯一
-    SAPExcelInfoI.Material=ReplyJson.value("proNo").toString();                 //物料号 产品编码
-    QString taskQty=ReplyJson.value("pcbNum").toString();
-    SAPExcelInfoI.taskQty=taskQty.toDouble();                                   //数量
-
-    QJsonArray rootFruitList=ReplyJson.value("pcbList").toArray();
-    for(int i=0;i<rootFruitList.size();i++){
-        SAPExcelInfoI.MaterialList.append(rootFruitList.at(i).toString());
-    }
-    SAPExcelInfoI.MaterialListdesc= SAPExcelInfoI.MaterialList.join("&");
-
-    //SAPExcelInfoI.MaterialListdesc=ReplyJson.value("pcbList").toString();
-    //SAPExcelInfoI.MaterialList=SAPExcelInfoI.MaterialListdesc.split("&");             //物料编码 集合
-
-    SAPExcelInfoI.creatTimer=QDateTime::currentDateTime();
-
-    ReplyJsonI.status=0;
-    if(SAPExcelInfoI.containerCode.trimmed().size()!=10){
-        ReplyJsonI.status=1;
-    }if(SAPExcelInfoI.taskType==""){
-        ReplyJsonI.status=2;
+        SAPExcelInfoI.sourcestation=ReplyJson.value("source").toString();
+        if(SAPExcelInfoI.containerCode.trimmed().size()!=10){
+            ReplyJsonI.status=1;//胶箱编码异常
+        }
     }
 
     if(ReplyJsonI.status==0){
-        ReplyJsonI=checkTaskRepeat(SAPExcelInfoI,ReplyJsonI);//判断当前任务是否重复下达 或者有未完成的任务
-        if(ReplyJsonI.status==0){
+        if(SAPExcelInfoI.taskType=="OUT"){
+            if(SAPExcelInfoI.taskQty>0){
+                QMap<QString, SAPExcelInfo>newSAPExcelInfoList=checkTaskRepeat_out(SAPExcelInfoI,ReplyJsonI);//判断当前任务是否重复下达 或者有未完成的任务
+                if(newSAPExcelInfoList.size()==int(SAPExcelInfoI.taskQty) && SAPExcelInfoI.taskQty>0){
+                    ReplyJsonI.status=0;
+                    emit sig_SAPExcelInfoList_new(newSAPExcelInfoList);
+                }else{
+                    ReplyJsonI.status=6;
+                    qDebug()<<"newSAPExcelInfoList.size:"<<newSAPExcelInfoList.size();
+                }
+            }else{
+                ReplyJsonI.status=9;//出库数量不能为0
+            }
+        }else{//入库 移库
+            ReplyJsonI=checkTaskRepeat(SAPExcelInfoI,ReplyJsonI);
             SAPExcelInfoI.taskStatus=0;
-            SAPExcelInfoI.taskStatusDesc="待执行";
-            emit sig_SAPExcelInfo_new(SAPExcelInfoI);// new task
-        }else{
-
+            if(ReplyJsonI.status==0){
+                emit sig_SAPExcelInfo_new(SAPExcelInfoI);// new task
+            }
         }
     }
 
     ReplyJsonI.errorMsg=errorMsgMap.value(ReplyJsonI.status);
-
     qDebug()<<"MES 下达任务--> 类型:"<<SAPExcelInfoI.taskType<<" taskId:"<<SAPExcelInfoI.taskId
            <<" sourcestation:"<<SAPExcelInfoI.sourcestation<<" destination:"<<SAPExcelInfoI.destination
-          <<" containerCode:"<<SAPExcelInfoI.containerCode<<"errorMsg:"<<ReplyJsonI.errorMsg;
-
-    return ReplyJsonI;
-}
-
-ReplyJson HttpServer::analysReplyJson_taskStatus(QJsonObject ReplyJson_, ReplyJson ReplyJsonI)
-{
-    QJsonObject ReplyJson=ReplyJson_;
-    SAPExcelInfo SAPExcelInfoI;
-    SAPExcelInfoI.taskType=ReplyJson.value("taskType").toString();
-    SAPExcelInfoI.taskId=ReplyJson.value("taskId").toString();
-    SAPExcelInfoI.taskStatus=ReplyJson.value("taskStatus").toInt();
-    SAPExcelInfoI.taskStatusDesc=ReplyJson.value("taskStatusDesc").toString();
-
-    if(SAPExcelInfoI.taskId!=""){
-        ReplyJsonI.status=100;
-        ReplyJsonI.errorMsg=errorMsgMap.value(ReplyJsonI.status);
-    }
-    qDebug()<<"MES 状态返回--> 类型: taskType:"<<SAPExcelInfoI.taskType<<" taskId:"<<SAPExcelInfoI.taskId
-           <<" taskStatus"<<SAPExcelInfoI.taskStatus<<" taskStatusDesc:"<<SAPExcelInfoI.taskStatusDesc;
-
-    return ReplyJsonI;
-}
-
-ReplyJson HttpServer::analysReplyJson_agvnew(QJsonObject ReplyJson_, ReplyJson ReplyJsonI)
-{
-    QJsonObject ReplyJson=ReplyJson_;
-    SAPExcelInfo SAPExcelInfoI;
-
-//    SAPExcelInfoI.taskId=ReplyJson.value("taskId").toString();
-//    SAPExcelInfoI.agvNum=ReplyJson.value("agvId").toInt();
-//    SAPExcelInfoI.priority=ReplyJson.value("priority").toInt();
-
-//    QJsonArray rootFruitList=ReplyJson.value("taskList").toArray();
-//    QJsonValue value = ReplyJson.value("taskList");//第一级对象 的值
-//    if(value.isObject()){  //判读第二级对象是否存在
-//        QJsonObject ReJson=value.toObject();
-//    }else if(value.isArray() && !rootFruitList.isEmpty()){  //判读第二级对象是以数组形式存在
-//        for(int i=0;i<rootFruitList.size();i++){
-//            SAPExcelInfo SAPExcelInfoI;
-//            QJsonObject ReJson=value[i].toObject();
-//            QString load=ReJson.value("load").toString();
-//            QString unLoad=ReJson.value("unLoad").toString();
-//            qDebug()<<"agvnew --> load:"<<load<<" unLoad:"<<unLoad;
-//        }
-//    }
-
-//    qDebug()<<"agvnew --> taskId:"<<SAPExcelInfoI.taskId<<" agvNum:"<<SAPExcelInfoI.agvNum
-//         <<" priority:"<<SAPExcelInfoI.priority<<" rootFruitList.size:"<< rootFruitList.size();
+          <<" containerCode:"<<SAPExcelInfoI.containerCode
+         <<"LabelNo"<<SAPExcelInfoI.LabelNo<<" taskQty:"<<SAPExcelInfoI.taskQty<<"errorMsg:"<<ReplyJsonI.status<<"--"<<ReplyJsonI.errorMsg;
 
     return ReplyJsonI;
 }
@@ -277,7 +229,7 @@ ReplyJson HttpServer::analysReplyJson_agvStatus(QJsonObject ReplyJson_, ReplyJso
     QJsonObject ReplyJson=ReplyJson_;
 
     ESS_Repost ESS_ReplyI;
-    ESS_ReplyI.eventCode_=ReplyJson.value("eventCode").toString();           //ESS-P 事件 回调类型
+    ESS_ReplyI.eventCode_=ReplyJson.value("eventCode").toString();          //ESS-P 事件 回调类型
     ESS_ReplyI.taskCode=ReplyJson.value("taskCode").toString();             //任务号
     ESS_ReplyI.taskStatus=ReplyJson.value("taskStatus").toString();         //任务状态
     ESS_ReplyI.actionCode=ReplyJson.value("actionCode").toString();         //任务行为编号 (LOAD取箱成功)
@@ -314,9 +266,7 @@ ReplyJson HttpServer::analysReplyJson_agvStatus(QJsonObject ReplyJson_, ReplyJso
         }
         ESS_ReplyI.eventCodeI=ServerInitItem.eventCodeMap.value(ESS_ReplyI.eventCode_);
         ESS_ReplyI.timer_str=QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz");
-        ESS_Single::GetInstance()->setCurrentESS_Repost(ESS_ReplyI.taskCode,ESS_ReplyI.eventCodeI.eventCodeDesc);
-
-
+        ESS_Single::getInstance()->setCurrentESS_Repost(ESS_ReplyI.taskCode,ESS_ReplyI.eventCodeI.eventCodeDesc);
     }
 
     qDebug()<<"--->回调类型:"<<ESS_ReplyI.eventCode_<<" 事件注释:"<<ESS_ReplyI.eventCodeDesc
@@ -338,8 +288,8 @@ QJsonObject HttpServer::_ReplyJson(QString action, ReplyJson ReplyJsonI)
 
     QString taskType=currentReplyJsonI.taskType;
     if(taskType== "newTask" || taskType== "taskStatus"){
-        ReJson.insert("type",ReplyJsonI.status);            //0 代表正常，其余代表异常
-        ReJson.insert("msg",ReplyJsonI.errorMsg);           //0 代表正常，其余代表异常
+        ReJson.insert("Status",ReplyJsonI.status);            //0 代表正常，其余代表异常
+        ReJson.insert("Message",ReplyJsonI.errorMsg);           //0 代表正常，其余代表异常
     }
 
     if(taskType== "agvTask" || taskType== "agvStatus"){      //创建 AGV 任务
@@ -351,14 +301,11 @@ QJsonObject HttpServer::_ReplyJson(QString action, ReplyJson ReplyJsonI)
     for(int i=0;i<ReplyJsonI.datalist.size();i++){
         FruitList.append(ReplyJsonI.datalist[i]);
     }
-    FruitList.append(tasksJson);
-    ReJson.insert("data",FruitList);
+    //FruitList.append(tasksJson);
+    //ReJson.insert("data",FruitList);
 
     QJsonDocument document=QJsonDocument(ReJson);
     QByteArray ReplyData = document.toJson();// 转换成QByteArray
-    CurrentSendI.ReplyData=ReplyData;
-    CurrentSendI.Errorinfo=currentReplyJsonI.errorMsg;
-    sapMsgInterface::getInstance()->setCurrentSend_(CurrentSendI);
 
     qDebug()<<"_ReplyJson: "<<action<<" error:"<<ReplyJsonI.status<<ReplyJsonI.errorMsg<<" ReJson:"<<ReJson;
 
@@ -368,24 +315,22 @@ QJsonObject HttpServer::_ReplyJson(QString action, ReplyJson ReplyJsonI)
 
 ReplyJson HttpServer::checkTaskRepeat(SAPExcelInfo SAPExcelInfoI,ReplyJson ReplyJsonI)
 {
-    if(SAPExcelInfoI.taskType=="OUT"){ReplyJsonI.status=6;}
     bool move_s=false;bool move_e=false;
-    QMap<QString, shelfBinInfo> shelfBinInfoMap= ESS_Single::GetInstance()->getshelfBinInfoMap();
+    QMap<QString, shelfBinInfo> shelfBinInfoMap= ESS_Single::getInstance()->getshelfBinInfoMap("","","");
     QMap<QString ,shelfBinInfo>::const_iterator iter_=shelfBinInfoMap.begin();
     while (iter_!=shelfBinInfoMap.end()) {
         if(iter_!=nullptr){
-            if(SAPExcelInfoI.containerCode==iter_.value().containerCode){
-                if(SAPExcelInfoI.taskType=="IN"){   //检查胶框是否重复
-                    ReplyJsonI.status=5;
-                }if(SAPExcelInfoI.taskType=="OUT"){//检查是否满足出库条件
-                    if(iter_.value().status==2){    //0 空闲  1入库中  2入库完成  3出库中  0出库完成--空闲
-                        ReplyJsonI.status=0;
-                    }else{
-                        ReplyJsonI.status=6;
-                    }
+            //检查是否满足入库条件
+            if(SAPExcelInfoI.taskType=="IN"){
+                if(SAPExcelInfoI.containerCode==iter_.value().containerCode){
+                    ReplyJsonI.status=5;//胶箱编码重复
+                }if(SAPExcelInfoI.destination==iter_.value().podIdDesc
+                     && SAPExcelInfoI.destination!=""  && iter_.value().status!=0){
+                    ReplyJsonI.status=7;//当前库位无法入库
                 }
             }
 
+            //检查是否满足移库条件
             if(SAPExcelInfoI.taskType=="MOVE"){
                 if(SAPExcelInfoI.sourcestation==iter_.value().podIdDesc //检查起始库位
                         && SAPExcelInfoI.containerCode==iter_.value().containerCode){
@@ -404,9 +349,53 @@ ReplyJson HttpServer::checkTaskRepeat(SAPExcelInfo SAPExcelInfoI,ReplyJson Reply
 
     if(SAPExcelInfoI.taskType=="MOVE"){
         if(!move_s || !move_e){
-            ReplyJsonI.status=6;
+            ReplyJsonI.status=8;
         }
     }
-
     return ReplyJsonI;
+}
+
+QMap<QString, SAPExcelInfo> HttpServer::checkTaskRepeat_out(SAPExcelInfo SAPExcelInfoI, ReplyJson ReplyJsonI)
+{
+    QMap<QString, SAPExcelInfo>newSAPExcelInfoList;
+    QMap<QString, shelfBinInfo> shelfBinInfoMap= ESS_Single::getInstance()->getshelfBinInfoMap("LabelNo",SAPExcelInfoI.LabelNo,"");
+    QMap<QString ,shelfBinInfo>::const_iterator iter_=shelfBinInfoMap.begin();
+    while (iter_!=shelfBinInfoMap.end()) {
+        if(iter_!=nullptr){
+            //检查是否满足出库条件
+            if(SAPExcelInfoI.taskType=="OUT" && SAPExcelInfoI.LabelNo!=""
+                    && SAPExcelInfoI.LabelNo==iter_.value().LabelNo){
+                if(iter_.value().status==2){//0 空闲  1入库中  2入库完成  3出库中  0出库完成--空闲
+                    if(newSAPExcelInfoList.size()<SAPExcelInfoI.taskQty){
+                        SAPExcelInfo SAPExcelInfoI_=SAPExcelInfoI;
+                        if(iter_.value().shelfBinIndex!=0){
+                            SAPExcelInfoI_.podIdDesc=iter_.value().podIdDesc;        //所属架位注释 -- MES
+                            SAPExcelInfoI_.sourcestation=SAPExcelInfoI_.podIdDesc;
+                            SAPExcelInfoI_.shelfBindesc=iter_.value().shelfBindesc;  //所属架位注释 -- ESS
+                            SAPExcelInfoI_.containerCode=iter_.value().containerCode;
+
+                            QString taskId=SAPExcelInfoI.taskId;
+                            if(iter_.value().containerCode.size()==10){
+                                int code=iter_.value().containerCode.right(9).toInt();
+                                taskId=SAPExcelInfoI.taskId+"_"+QString::number(code);
+                                newSAPExcelInfoList.insert(taskId,SAPExcelInfoI_);
+                                qDebug()<<"出库工单打包-->taskId:"<<SAPExcelInfoI.taskId<<" podIdDesc:"<<SAPExcelInfoI.podIdDesc
+                                       <<" shelfBindesc:"<<SAPExcelInfoI.shelfBindesc<<" size:"<<newSAPExcelInfoList.size()<<" taskQty:"<<SAPExcelInfoI.taskQty;
+                            }else{
+                                qDebug()<<"出库工单打包失败-->taskId:"<<SAPExcelInfoI.taskId<<" podIdDesc:"<<SAPExcelInfoI.podIdDesc
+                                       <<" shelfBindesc:"<<SAPExcelInfoI.shelfBindesc<<" containerCode:"<<SAPExcelInfoI_.containerCode<<" size:"<<newSAPExcelInfoList.size()<<" taskQty:"<<SAPExcelInfoI.taskQty;
+                            }
+
+                       }
+                    }
+                }else{
+                    ReplyJsonI.status=6;
+                }
+            }
+        }else{
+            return  newSAPExcelInfoList;
+        }
+        iter_++;
+    }
+    return newSAPExcelInfoList;
 }

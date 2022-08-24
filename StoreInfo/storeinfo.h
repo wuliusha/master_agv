@@ -24,15 +24,12 @@ public:
     ~StoreInfo();
 
     QTimer *StoreInfoTimer;
-    int StoreTimercount=0;
+    int StoreTimercount=16;
+    bool storeTimerbool=true;
     QString currentUserNuber="";
 
     binwidget *binwidgetItem;
-
-    QList<QPushButton *>Actionbtns;
     QMap<QString,WidgetBin*>WidgetBinQMap;
-
-    QMap<QString,shelfBinInfo>shelfBinInfoMap;        //站点 的实时状态信息链表
     QMap<QString ,shelfBinInfo>currentBinInfoMap;     //当前货架架位信息显示
 
 public slots:
@@ -42,25 +39,37 @@ public slots:
 public:
     void StoreInfoInit();
 
-    void setCurrentBinInfo(int podId);       //设置当前显示的货架
-
     void newWidgetBin();                     //创建显示Item
 
     void UPdateWidgetBin();                 //更新显示 Item
 
-    QMap<QString,shelfBinInfo> shelfBinInfoMap_query(int podId);           //获取 Bin 的基础信息
-
 signals:
     void sinalStoreCheck(int ikey,QString LableNO);//查仓任务  到达提醒
+
+    void sig_SAPExcelInfo_new(SAPExcelInfo SAPExcelInfoI);  //创建MES任务
+
+    void sig_containerCode_clear(QString shelfBindesc,QString containerCode,QString type);    //清空库位 0本地库  1远程库
+
 
 private slots:
 
     void on_query_Button_clicked();
 
-    void on_queryMaterial_returnPressed();
+    void on_queryLineEdit_returnPressed();
+
+    void on_pushButton_clicked();
+
+
 
 public slots:
     void ON_shelfBinInfo(shelfBinInfo shelfBinInfoItem);
+
+    //创建 SAP 任务
+    void ON_SAPExcelInfo_new(SAPExcelInfo SAPExcelInfoI);
+
+    //清空库位
+    void ON_containerCode_clear(QString shelfBindesc,QString containerCode,QString type);
+
 
 
 private:
@@ -74,9 +83,6 @@ private:
 
     QMap<QString, shelfBinInfo> newshelfBinInfo();
 
-public slots:
-    void ON_Pressed();
-    void ON_Released();
 
 };
 

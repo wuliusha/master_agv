@@ -103,7 +103,7 @@ QList<RW_Excel> wrexcelprocess::UPRead_Excel(QList<QList<QVariant> > m_datas)
     QList< QList<QVariant> >::iterator iter;
     iter = m_datas.begin();
     int count=0;
-    for(; iter != m_datas.end() ; iter++)
+    for(; iter != m_datas.end() ; ++iter)
     {
         RW_Excel RW_ExcelItiem;
         RW_ExcelItiem.ExcelA=m_datas[count].at(0).toString();
@@ -264,7 +264,7 @@ QMap<QString, SAPExcelInfo> wrexcelprocess::ReturnSAPExcelInfo(QList<QList<QVari
     QList< QList<QVariant> >::iterator iter;
     iter = m_datas.begin();
     int count=0;
-    for(; iter != m_datas.end() ; iter++)
+    for(; iter != m_datas.end() ; ++iter)
     {
         if(m_datas[count].at(0).toString().trimmed().isEmpty())
         {
@@ -297,7 +297,7 @@ QMap<QString, SAPExcelInfo> wrexcelprocess::ReturnSAPExcelInfo_other(QList<QList
     QList< QList<QVariant> >::iterator iter;
     iter = m_datas.begin();
     int count=0;
-    for(; iter != m_datas.end() ; iter++)
+    for(; iter != m_datas.end() ; ++iter)
     {
         /************其他类型 新增部分参数定义   数据库不用新增列***************/
 
@@ -364,7 +364,7 @@ QMap<QString,agvSubTask > wrexcelprocess::read_movepointmap(QList<QList<QVariant
     QList< QList<QVariant> >::iterator iter;
     iter = m_datas.begin();
     int count=0;int TaskId_=1000;
-    for(; iter != m_datas.end() ; iter++)
+    for(; iter != m_datas.end() ; ++iter)
     {
         agvSubTask agvSubTaskItiem;
         agvSubTaskItiem.Id=m_datas[count].at(0).toInt();                                 //编号
@@ -712,7 +712,7 @@ bool wrexcelprocess::on_EXCEL_Log_clicked(QMap<int, record_log> Record_logMap)
         RW_ExcelItiem.ExcelT=iter.value().Time.toString();
 
         Write_ExcelList.append(RW_ExcelItiem);
-        iter++;
+        ++iter;
     }
 
     QString timer=QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm");
@@ -752,7 +752,7 @@ bool wrexcelprocess::on_EXCEL_store_clicked(QMap<QString, materialShelfbin> Reco
         RW_ExcelItiem.ExcelI=iter.value().lastuser;
         RW_ExcelItiem.ExcelJ=iter.value().lastCheckTimer.toString("yyyy-MM-dd hh:mm:ss");
         Write_ExcelList.append(RW_ExcelItiem);
-        iter++;
+        ++iter;
     }
 
     QString timer=QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm");

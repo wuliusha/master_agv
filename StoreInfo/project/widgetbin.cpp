@@ -62,11 +62,14 @@ void WidgetBin::updateGram(QString Action)
     QString Value=QString::number(CurrentValue)+"%";
     if(shelfBinInfoItem.status==0){
         painter->setBrush(QColor(141, 131, 130));
+    }if(shelfBinInfoItem.status==1){
+        painter->setBrush(QColor(151, 170, 166));
     }if(shelfBinInfoItem.status==2){
         painter->setBrush(QColor(85,255,127));
-    }if(shelfBinInfoItem.status==1 || shelfBinInfoItem.status==3){
-        painter->setBrush(QColor(151, 170, 166));
+    }if( shelfBinInfoItem.status==3){
+        painter->setBrush(QColor(118, 77, 57));
     }
+
     if(CurrentValue>1){
         painter->drawRect(QRect(x0+4,y0+count,116,int(CurrentValue)));
     }else if(CurrentValue>0){

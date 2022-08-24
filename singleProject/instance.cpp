@@ -21,9 +21,11 @@ Instance *Instance::GetInstance()
     else
     {
         mutex.lock();
-        instanceItiem=new Instance;
-        return instanceItiem;
+        if(instanceItiem == nullptr){
+            instanceItiem=new Instance;
+        }
         mutex.unlock();
+        return instanceItiem;
     }
 }
 

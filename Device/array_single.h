@@ -32,6 +32,9 @@ public:
     //设备类型 deviceType-->  动作指令 orderType
     QByteArray device_action(QString deviceType,QString orderType);
 
+    //接驳台动作指令 orderType
+    QByteArray deviceaction_s(int orderType);
+
     //进制的转换  获取当前设备各个IO口的状态
     controlbox setSystemchage(QString DeviceIP,QByteArray AnalysisArray);
 
@@ -43,9 +46,6 @@ public:
 
     //获取升降机的动作及查询指令---单个
     QByteArray getLiftactionArray(LiftTask LiftTaskI,int startFloor,int destFloor);
-
-    //获取升降机的动作及查询指令---批量
-    QByteArray getLiftAnalysisArray(LiftTask LiftTaskI,QString actionType,int startFloor,int destFloor);
 
     //进制的转换  获取当前设备各个IO口的状态
     quint16 getSystemchage(QByteArray AnalysisArray,int bye,int count);
